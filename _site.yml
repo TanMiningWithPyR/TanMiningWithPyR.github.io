@@ -1,0 +1,27 @@
+name: "my-website"
+output_dir: "."
+navbar:
+  title: "Affluence Tan"
+  left:
+    - text: "Home"
+      icon: fa-home
+      href: index.html
+    - text: "About"
+      icon: fa-info
+      href: about.html
+    - text: "More"
+      icon: fa-gear
+      menu:
+        - text: "Data Modeling"
+          href: Preface.html
+  right:
+    - text: "github"
+      icon: fa-github
+      href: https://github.com/TanMiningWithPyR 
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
+    include:
+      after_body: footer.html
+      css: styles.css

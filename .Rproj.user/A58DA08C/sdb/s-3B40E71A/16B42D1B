@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"About This Website\"\n---\n\n这个是用R Markdown 做的",
+    "created" : 1483694434426.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1296442831",
+    "id" : "16B42D1B",
+    "lastKnownWriteTime" : 1483683706,
+    "last_content_update" : 1483683706,
+    "path" : "D:/TanMiningWithPyR.github.io/about.Rmd",
+    "project_path" : "about.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
