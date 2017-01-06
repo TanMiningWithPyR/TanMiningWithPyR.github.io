@@ -186,4 +186,4 @@ CrossTable(x = adult_test$income, y = adult_predictions,
 
 朴素贝叶斯更加典型的应用场景是在过滤垃圾邮件分类的方面。
 
-[数据模型学习4--决策树](Decision_tree.html)
+[数据模型学习4--决策树](Decision_Tree.html)
