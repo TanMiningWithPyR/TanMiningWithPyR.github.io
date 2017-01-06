@@ -9,9 +9,11 @@
 <meta name="generator" content="pandoc" />
 
 
+<meta name="author" content="Affluence Tan" />
 
+<meta name="date" content="2016-12-30" />
 
-<title>这里是Affluence Tan/谭夫有的个人博客</title>
+<title>2.kmean聚类</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -222,36 +224,101 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">这里是Affluence Tan/谭夫有的个人博客</h1>
+<h1 class="title toc-ignore">2.kmean聚类</h1>
+<h4 class="author"><em>Affluence Tan</em></h4>
+<h4 class="date"><em>December 30, 2016</em></h4>
 
 </div>
 
 
-<table>
-<thead>
-<tr class="header">
-<th>个人照片</th>
-<th>电子邮箱</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="tanf.jpg" /></td>
-<td><a href="mailto:fuyou_tan@sina.cn">fuyou_tan@sina.cn</a></td>
-</tr>
-</tbody>
-</table>
 <div class="section level2">
-<h2>自我描述：</h2>
-<p>一个略懂IT的统计学人。</p>
+<h2>简单理解聚类</h2>
+<p>聚类是一种无监督学习，你不必提前知道被划分的组是什么样的，甚至可能不知道你能找到什么，所以，聚类是用来发现而不是预测。</p>
+<div id="k" class="section level3">
+<h3>什么是K均值聚类</h3>
+<ul>
+<li>选择k个初始的类中心，类中心是可以随机选择的。</li>
+<li>将其中样本分配到最近的类中心，距离定义类似于KNN。</li>
+<li>计算每个类的质心，质心可以通过各个类的均值得到。</li>
+<li>根据新的质心重新分配样本。</li>
+<li>迭代第三，四步，直到质心不在移动。</li>
+<li>变量要求是连续变量。</li>
+</ul>
 </div>
-<div class="section level2">
-<h2>技术文章：</h2>
-<p><a href="Preface.html">数据模型学习–前言</a></p>
-<p><a href="KNN.html">数据模型学习1–KNN</a></p>
-<p><a href="kmean.html">数据模型学习2–聚类分析</a></p>
+<div id="k" class="section level3">
+<h3>如何选择k</h3>
+<p>如果没有先验的知识，经验建议为<span class="math inline">\(\sqrt{n/2}\)</span>，其中n表示样本数量。</p>
+</div>
+</div>
+<div id="r" class="section level2">
+<h2>R实战</h2>
+<div class="section level3">
+<h3>获取数据集</h3>
+<p>在研究聚类问题的时候，我们一般需要结合业务来选择K，这里为了学习，使用R语言自带的著名的iris数据集来研究聚类问题。iris是法国的国花鸢尾花，我们先加载数据集。</p>
+<pre class="r"><code>str(iris)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    150 obs. of  5 variables:
+##  $ Sepal.Length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+##  $ Sepal.Width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+##  $ Petal.Length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+##  $ Petal.Width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+##  $ Species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<pre class="r"><code>summary(iris)</code></pre>
+<pre><code>##   Sepal.Length    Sepal.Width     Petal.Length    Petal.Width   
+##  Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
+##  1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600   1st Qu.:0.300  
+##  Median :5.800   Median :3.000   Median :4.350   Median :1.300  
+##  Mean   :5.843   Mean   :3.057   Mean   :3.758   Mean   :1.199  
+##  3rd Qu.:6.400   3rd Qu.:3.300   3rd Qu.:5.100   3rd Qu.:1.800  
+##  Max.   :7.900   Max.   :4.400   Max.   :6.900   Max.   :2.500  
+##        Species  
+##  setosa    :50  
+##  versicolor:50  
+##  virginica :50  
+##                 
+##                 
+## </code></pre>
+<p>可以看到，前4个变量分别是萼片的长，宽和花瓣的长，宽。最后的一个Species是iris这个花的分类，可以看到一共有三类，每个类有50个样本。在做聚类研究的时候，可以把先这个变量去掉，同时，与KNN类似的，要将变量标准化。</p>
+</div>
+<div class="section level3">
+<h3>整理数据集</h3>
+<pre class="r"><code># Nomalize iris data
+iris_n &lt;- as.data.frame(scale(iris[-5]))</code></pre>
+</div>
+<div class="section level3">
+<h3>训练数据集</h3>
+<p>根据上面的探索，我们已经知道这个数据集可以分成3类了，所以k为3。在一般实际的案例中，k的值要通过业务来判断。</p>
+<pre class="r"><code> iris_clusters &lt;- kmeans(iris_n,3)</code></pre>
+</div>
+<div class="section level3">
+<h3>评估模型</h3>
+<p>评估聚类的结果是主观的，最终要看聚类的结果是不是对分析实际业务有用。可以先看一下每个cluster的大小和质心。</p>
+<pre class="r"><code># look at the size of the clusters
+iris_clusters$size</code></pre>
+<pre><code>## [1] 21 96 33</code></pre>
+<pre class="r"><code># look at the cluster centers
+iris_clusters$centers</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width
+## 1   -1.3232208  -0.3718921   -1.1334386  -1.1111395
+## 2    0.5690971  -0.3705265    0.6888118   0.6609378
+## 3   -0.8135055   1.3145538   -1.2825372  -1.2156393</code></pre>
+<p>我们把原始的Species变量求平均，与上面的质心对比一下。</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre class="r"><code>iris_n$Species &lt;- iris$Species
+iris_by_species &lt;- group_by(iris_n,Species) %&gt;% summarise_each(funs(mean(.)))
+iris_by_species</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##      Species Sepal.Length Sepal.Width Petal.Length Petal.Width
+##       &lt;fctr&gt;        &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+## 1     setosa   -1.0111914   0.8504137   -1.3006301  -1.2507035
+## 2 versicolor    0.1119073  -0.6592236    0.2843712   0.1661774
+## 3  virginica    0.8992841  -0.1911901    1.0162589   1.0845261</code></pre>
+<p>对比一下数据可以看出，聚类结果里面的1对应的是versicolor，聚类结果里面的2对应的是virginica，聚类结果里面的3对应的是setosa。当然，在现实的案例中，这些分类及名称通常要我们自己定义。</p>
+</div>
+<div class="section level3">
+<h3>模型改进</h3>
+<p>kmean与KNN的改进方式类似。当然，除了kmean，聚类的方法还有很多，比如层次聚类。</p>
 <p><a href="NB.html">数据模型学习3–朴素贝叶斯</a></p>
-<p><a href="Decision_tree.html">数据模型学习4–决策树</a></p>
+</div>
 </div>
 
 <p>Copyright &copy; 2016 Affluence Tan. All rights reserved.</p>

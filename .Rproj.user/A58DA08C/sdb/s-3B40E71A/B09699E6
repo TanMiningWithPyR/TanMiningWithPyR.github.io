@@ -1,14 +1,14 @@
 {
     "collab_server" : "",
-    "contents" : "---\ntitle: \"Affluence Tan's Website\"\n---\n\n[数据模型学习前言](Preface.html)",
+    "contents" : "---\ntitle: \"这里是Affluence Tan/谭夫有的个人博客\"\n---\n个人照片  |     电子邮箱\n----------|------------------------\n![](tanf.jpg) |  fuyou_tan@sina.cn\n\n\n##自我描述：\n\n一个略懂IT的统计学人。\n\n## 技术文章：\n\n[数据模型学习--前言](Preface.html)\n\n[数据模型学习1--KNN](KNN.html)\n\n[数据模型学习2--聚类分析](kmean.html)\n\n[数据模型学习3--朴素贝叶斯](NB.html)\n\n[数据模型学习4--决策树](Decision_tree.html)\n",
     "created" : 1483694248451.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "1594169980",
+    "hash" : "3324285077",
     "id" : "B09699E6",
-    "lastKnownWriteTime" : 1483694314,
-    "last_content_update" : 1483694314604,
+    "lastKnownWriteTime" : 1483711818,
+    "last_content_update" : 1483711818099,
     "path" : "D:/TanMiningWithPyR.github.io/index.Rmd",
     "project_path" : "index.Rmd",
     "properties" : {

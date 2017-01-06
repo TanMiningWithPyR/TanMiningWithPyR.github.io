@@ -1,14 +1,14 @@
 {
     "collab_server" : "",
-    "contents" : "---\ntitle: \"About This Website\"\n---\n\n这个是用R Markdown 做的",
+    "contents" : "---\ntitle: \"About This Website\"\n---\n\n谭夫有的博客\n\n本博客是利用R Markdown 制作完成的，在此感谢RStudio的开发人员。",
     "created" : 1483694434426.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "1296442831",
+    "hash" : "183206358",
     "id" : "16B42D1B",
-    "lastKnownWriteTime" : 1483683706,
-    "last_content_update" : 1483683706,
+    "lastKnownWriteTime" : 1483711952,
+    "last_content_update" : 1483711952819,
     "path" : "D:/TanMiningWithPyR.github.io/about.Rmd",
     "project_path" : "about.Rmd",
     "properties" : {

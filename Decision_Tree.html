@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Affluence Tan" />
+
+
+<title>4.Decision Tree</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Affluence Tan</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="about.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-gear"></span>
+     
+    More
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Preface.html">Data Modeling</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/TanMiningWithPyR">
+    <span class="fa fa-github"></span>
+     
+    github
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">4.Decision Tree</h1>
+<h4 class="author"><em>Affluence Tan</em></h4>
+<h4 class="date"><em>January 4, 2017</em></h4>
+
+</div>
+
+
+<div class="section level2">
+<h2>简单理解决策树</h2>
+<div class="section level3">
+<h3>决策树的基本概念</h3>
+<p>决策树顾名思义就像一颗树，一颗树有根，枝，叶。所以，决策树也有根决策节点，（枝）决策节点，叶节点。其中枝决策节点这名字是我自己取的。叶节点为什么不叫叶决策节点呢？因为到了叶节点就已经分出类了，不需要再做决策了。</p>
+<p><img src="Decision_Tree_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>如上图就是一个决策树，一共有7个节点。其中节点1是根决策节点，节点2,3是（枝）决策节点，节点4,5,6,7是是叶节点。</p>
+</div>
+<div class="section level3">
+<h3>选择最佳的分割</h3>
+<p>建立决策树的第一个任务是要确定根据哪个特征（也就是自变量）就行分割。一般来说，选择能产生最大的信息增益的特征进行分割。下面解释什么是信息增益。</p>
+<div class="section level4">
+<h4>信息熵</h4>
+<p>信息熵这个词是C．E．香农从热力学中借用过来的。热力学中的热熵是表示分子状态混乱程度的物理量。香农用信息熵的概念来描述信源的不确定度。公式为：</p>
+<p><span class="math inline">\(Entropy(S)=\sum_{i=1}^c-p_ilog_2(p_i)\)</span></p>
+<p>其中<span class="math inline">\(S\)</span>代表数据的分割，比如一群信用卡卡主，有违约和不违约，<span class="math inline">\(c=2\)</span>的分割。<span class="math inline">\(p_i\)</span>为样本落入对应分割 <span class="math inline">\(i\)</span> 的比例（概率），如果违约的是50%，不违约当然也是50%。那么信息熵为：</p>
+<p><span class="math inline">\(Entropy(DefaultOrNot)=-0.5 \times log_2(0.5) - 0.5 \times log_2(0.5)=1\)</span></p>
+<p>我们可以考察有两个类的分割的所有可能的熵，如下图。可以看到，熵总是在0到1之间，0代表信息纯度高，也就是信息内容多，意义明确。在本例中，如果一个人的违约率为100%或0%，那么也就意味着我们知道了这个人是否违约，很显然，比起50%的概率，信息的不确定性低了。</p>
+<p><img src="Decision_Tree_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>当按某个特征<span class="math inline">\(F\)</span>分了<span class="math inline">\(d\)</span>类以后，比如说，特征<span class="math inline">\(F\)</span>为卡主的年薪，有<span class="math inline">\(d=2\)</span>的特征类，年薪分别为&gt;500K和&lt;=500K，分别占样本数的20%和80%。违约率分别为40%和52.5%(注意违约率一定满足<span class="math inline">\(0.525 \times 0.8 + 0.2 \times 0.4 = 0.5\)</span>)，那么对于<span class="math inline">\(F_j\)</span>的熵为：</p>
+<p><span class="math inline">\(Entropy(F_j)=\sum_{i=1}^c-p_{ij}log_2(p_{ij})\)</span>，其中：</p>
+<ul>
+<li><span class="math inline">\(F_j\)</span>为第<span class="math inline">\(j\)</span>个特征类，这里有两个，为年薪&gt;500K和&lt;=500K</li>
+<li><span class="math inline">\(p_{ij}\)</span>为第<span class="math inline">\(j\)</span>个特征类中样本落入的第<span class="math inline">\(i\)</span>个分割的概率</li>
+</ul>
+<pre class="r"><code># Entropy(F1) card owner of annual salary &gt;500k
+Entropy_f1 &lt;- -0.4 * log2(0.4) - (1-0.4) * log2(1-0.4)
+# Entropy(F2) card owner of annual salary &lt;=500k
+Entropy_f2 &lt;- -0.525 * log2(0.525) - (1-0.525) * log2(1-0.525)</code></pre>
+<p><span class="math inline">\(Entropy(S_2)=\sum_{j=1}^d{w_j}Entropy(F_j)\)</span>，其中： <span class="math inline">\(w_j\)</span>为第<span class="math inline">\(j\)</span>个特征类占总样本的比例</p>
+<pre class="r"><code># Entropy(S1) based on feature F (annual salary)
+entropy_s2 &lt;- 0.2 * Entropy_f1 + 0.8 * Entropy_f2
+entropy_s2</code></pre>
+<pre><code>## [1] 0.9927468</code></pre>
+</div>
+<div class="section level4">
+<h4>信息增益</h4>
+<p><span class="math inline">\(InfoGain(F)=Entropy(S)-Entropy(S_2) = 1 - 0.9927468 = 0.0072532\)</span></p>
+</div>
+</div>
+<div class="section level3">
+<h3>修剪决策树</h3>
+<p>一棵树可以无限制的增长下去，选择需要分割的特征，知道每个样本都归于一类，当然这样也就<strong>过拟合</strong>了。所以要修剪。</p>
+<div class="section level4">
+<h4>提前停止法</h4>
+<p>一旦树达到了一定数量的决策，或者决策点只有少量案例，就停止增长。</p>
+</div>
+<div class="section level4">
+<h4>后剪枝法</h4>
+<p>如果树生长的过大，根据节点处的错误率修剪让树的大小合适。我们要用的C5.0就是用这种方法。</p>
+</div>
+</div>
+</div>
+<div id="r" class="section level2">
+<h2>R实战</h2>
+<div class="section level3">
+<h3>获取数据集</h3>
+<p>我将继续使用Naive Bayes用过的数据集audit，要预测的是income这个变量。</p>
+<pre class="r"><code>library(readr)
+adult &lt;- read_csv(&quot;adult.csv&quot;,na=&quot;?&quot;)
+adult$income = as.factor(adult$income)
+str(adult)</code></pre>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    32561 obs. of  15 variables:
+##  $ age           : int  39 50 38 53 28 37 49 52 31 42 ...
+##  $ workclass     : chr  &quot;State-gov&quot; &quot;Self-emp-not-inc&quot; &quot;Private&quot; &quot;Private&quot; ...
+##  $ fnlwgt        : int  77516 83311 215646 234721 338409 284582 160187 209642 45781 159449 ...
+##  $ education     : chr  &quot;Bachelors&quot; &quot;Bachelors&quot; &quot;HS-grad&quot; &quot;11th&quot; ...
+##  $ education_num : int  13 13 9 7 13 14 5 9 14 13 ...
+##  $ marital_status: chr  &quot;Never-married&quot; &quot;Married-civ-spouse&quot; &quot;Divorced&quot; &quot;Married-civ-spouse&quot; ...
+##  $ occupation    : chr  &quot;Adm-clerical&quot; &quot;Exec-managerial&quot; &quot;Handlers-cleaners&quot; &quot;Handlers-cleaners&quot; ...
+##  $ relationship  : chr  &quot;Not-in-family&quot; &quot;Husband&quot; &quot;Not-in-family&quot; &quot;Husband&quot; ...
+##  $ race          : chr  &quot;White&quot; &quot;White&quot; &quot;White&quot; &quot;Black&quot; ...
+##  $ sex           : chr  &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; ...
+##  $ capital_gain  : int  2174 0 0 0 0 0 0 0 14084 5178 ...
+##  $ capital_loss  : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ hours_per_week: int  40 13 40 40 40 40 16 45 50 40 ...
+##  $ native_country: chr  &quot;United-States&quot; &quot;United-States&quot; &quot;United-States&quot; &quot;United-States&quot; ...
+##  $ income        : Factor w/ 2 levels &quot;&lt;=50K&quot;,&quot;&gt;50K&quot;: 1 1 1 1 1 1 1 2 2 2 ...</code></pre>
+</div>
+<div class="section level3">
+<h3>探索和准备数据集</h3>
+<p>在学习NB分类的时候已经探索过了，通过画直方图我们看出了capital_gain这个变量对预测很重要。在这一章可以看到，决策树可以自动帮我们分析出这个结论。这个是它的优点。</p>
+<pre class="r"><code># create training and test data
+adult_train &lt;- adult[1:21000, ]
+adult_test &lt;- adult[21001:32561, ]</code></pre>
+</div>
+<div class="section level3">
+<h3>基于数据集训练模型</h3>
+<pre class="r"><code># load the &quot;C50&quot; library
+library(C50)
+adult_classifier &lt;- C5.0(income ~ ., data = adult_train)
+adult_classifier</code></pre>
+<pre><code>## 
+## Call:
+## C5.0.formula(formula = income ~ ., data = adult_train)
+## 
+## Classification Tree
+## Number of samples: 21000 
+## Number of predictors: 14 
+## 
+## Tree size: 74 
+## 
+## Non-standard options: attempt to group attributes</code></pre>
+<pre class="r"><code>adult_predictions &lt;- predict(adult_classifier, adult_test[,-15])</code></pre>
+<p>可以看到，有74个决策节点。</p>
+</div>
+<div class="section level3">
+<h3>评估模型性能</h3>
+<pre class="r"><code># load the &quot;gmodels&quot; library
+library(gmodels)
+# Create the cross tabulation of predicted vs. actual
+CrossTable(x = adult_test$income, y = adult_predictions,
+           prop.chisq=FALSE)</code></pre>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  11561 
+## 
+##  
+##                   | adult_predictions 
+## adult_test$income |     &lt;=50K |      &gt;50K | Row Total | 
+## ------------------|-----------|-----------|-----------|
+##             &lt;=50K |      8177 |       547 |      8724 | 
+##                   |     0.937 |     0.063 |     0.755 | 
+##                   |     0.896 |     0.225 |           | 
+##                   |     0.707 |     0.047 |           | 
+## ------------------|-----------|-----------|-----------|
+##              &gt;50K |       953 |      1884 |      2837 | 
+##                   |     0.336 |     0.664 |     0.245 | 
+##                   |     0.104 |     0.775 |           | 
+##                   |     0.082 |     0.163 |           | 
+## ------------------|-----------|-----------|-----------|
+##      Column Total |      9130 |      2431 |     11561 | 
+##                   |     0.790 |     0.210 |           | 
+## ------------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<p>模型的准确度为0.707+0.163 =0.87，如果你还记得NB分类的值，没错，0.791！，那是好上了太多。 而且在收入大于50K的人群中，有66.4%的人被挑选出来了。这是一个巨大的提升，我上次改进以后的模型也没有这么高。</p>
+<pre class="r"><code>#summary model
+summary(adult_classifier)</code></pre>
+<pre><code>## 
+## Call:
+## C5.0.formula(formula = income ~ ., data = adult_train)
+## 
+## 
+## C5.0 [Release 2.07 GPL Edition]      Fri Jan 06 18:40:03 2017
+## -------------------------------
+## 
+## Class specified by attribute `outcome&#39;
+## 
+## Read 21000 cases (15 attributes) from undefined.data
+## 
+## Decision tree:
+## 
+## capital_gain &gt; 6849:
+## :...relationship in {Not-in-family,Husband,Wife,Unmarried}: &gt;50K (865/10)
+## :   relationship in {Own-child,Other-relative}:
+## :   :...capital_gain &lt;= 27828: &gt;50K (18)
+## :       capital_gain &gt; 27828: &lt;=50K (5)
+## capital_gain &lt;= 6849:
+## :...relationship in {Not-in-family,Own-child,Unmarried,Other-relative}:
+##     :...capital_loss &gt; 2206:
+##     :   :...capital_loss &gt; 3683: &lt;=50K (5)
+##     :   :   capital_loss &lt;= 3683:
+##     :   :   :...capital_loss &gt; 2352: &gt;50K (27)
+##     :   :       capital_loss &lt;= 2352:
+##     :   :       :...capital_loss &gt; 2282: &lt;=50K (12)
+##     :   :           capital_loss &lt;= 2282:
+##     :   :           :...fnlwgt &lt;= 283896: &gt;50K (17/5)
+##     :   :               fnlwgt &gt; 283896: &lt;=50K (4)
+##     :   capital_loss &lt;= 2206:
+##     :   :...capital_gain &gt; 4650:
+##     :       :...capital_gain &lt;= 4787: &gt;50K (17)
+##     :       :   capital_gain &gt; 4787: &lt;=50K (55/5)
+##     :       capital_gain &lt;= 4650:
+##     :       :...education_num &lt;= 12: &lt;=50K (8993/197)
+##     :           education_num &gt; 12:
+##     :           :...age &lt;= 29: &lt;=50K (824/25)
+##     :               age &gt; 29:
+##     :               :...capital_gain &gt; 401: &lt;=50K (45)
+##     :                   capital_gain &lt;= 401:
+##     :                   :...education_num &gt; 14: [S1]
+##     :                       education_num &lt;= 14:
+##     :                       :...hours_per_week &lt;= 43: &lt;=50K (770/90)
+##     :                           hours_per_week &gt; 43:
+##     :                           :...sex = Female: &lt;=50K (190/41)
+##     :                               sex = Male: [S2]
+##     relationship in {Husband,Wife}:
+##     :...capital_loss &gt; 1762:
+##         :...capital_loss &lt;= 1980: &gt;50K (376/8)
+##         :   capital_loss &gt; 1980:
+##         :   :...capital_loss &lt;= 2149: &lt;=50K (37)
+##         :       capital_loss &gt; 2149:
+##         :       :...education_num &lt;= 12: &lt;=50K (35/11)
+##         :           education_num &gt; 12: &gt;50K (36)
+##         capital_loss &lt;= 1762:
+##         :...capital_gain &gt; 5013: &gt;50K (74/3)
+##             capital_gain &lt;= 5013:
+##             :...education in {Bachelors,Masters,Doctorate,Prof-school}:
+##                 :...capital_gain &gt; 3103:
+##                 :   :...capital_gain &lt;= 4101: &lt;=50K (21)
+##                 :   :   capital_gain &gt; 4101:
+##                 :   :   :...capital_gain &lt;= 4416: &gt;50K (12/1)
+##                 :   :       capital_gain &gt; 4416: &lt;=50K (15)
+##                 :   capital_gain &lt;= 3103:
+##                 :   :...occupation in {NA,Armed-Forces,
+##                 :       :              Priv-house-serv}: &gt;50K (0)
+##                 :       occupation in {Adm-clerical,Handlers-cleaners,
+##                 :       :              Other-service,Craft-repair,
+##                 :       :              Transport-moving,Farming-fishing,
+##                 :       :              Machine-op-inspct}:
+##                 :       :...hours_per_week &lt;= 41: &lt;=50K (229/74.7)
+##                 :       :   hours_per_week &gt; 41:
+##                 :       :   :...relationship = Wife: &lt;=50K (4)
+##                 :       :       relationship = Husband: [S3]
+##                 :       occupation in {Exec-managerial,Prof-specialty,Sales,
+##                 :       :              Tech-support,Protective-serv}:
+##                 :       :...hours_per_week &lt;= 31:
+##                 :           :...relationship = Wife: &gt;50K (41.5/11.3)
+##                 :           :   relationship = Husband:
+##                 :           :   :...education_num &lt;= 14: &lt;=50K (84.5/23)
+##                 :           :       education_num &gt; 14: &gt;50K (20.5/6.7)
+##                 :           hours_per_week &gt; 31:
+##                 :           :...age &gt; 32: &gt;50K (1347.5/349.7)
+##                 :               age &lt;= 32: [S4]
+##                 education in {HS-grad,11th,9th,Some-college,Assoc-acdm,
+##                 :             Assoc-voc,7th-8th,5th-6th,10th,1st-4th,Preschool,
+##                 :             12th}:
+##                 :...capital_loss &gt; 1504: &lt;=50K (72)
+##                     capital_loss &lt;= 1504:
+##                     :...capital_loss &gt; 880: &gt;50K (28/9)
+##                         capital_loss &lt;= 880:
+##                         :...education_num &lt;= 8: &lt;=50K (977/98)
+##                             education_num &gt; 8:
+##                             :...capital_gain &gt; 4416: &lt;=50K (32)
+##                                 capital_gain &lt;= 4416:
+##                                 :...capital_gain &gt; 4101: &gt;50K (34/5)
+##                                     capital_gain &lt;= 4101:
+##                                     :...capital_gain &gt; 3103: &lt;=50K (90)
+##                                         capital_gain &lt;= 3103:
+##                                         :...capital_gain &gt; 2993: &gt;50K (36)
+##                                             capital_gain &lt;= 2993:
+##                                             :...capital_gain &gt; 594: &lt;=50K (63)
+##                                                 capital_gain &lt;= 594:
+##                                                 :...age &lt;= 35: &lt;=50K (1556/323)
+##                                                     age &gt; 35: [S5]
+## 
+## SubTree [S1]
+## 
+## marital_status in {Married-civ-spouse,Married-spouse-absent,Married-AF-spouse,
+## :                  Widowed}: &lt;=50K (12)
+## marital_status in {Never-married,Divorced,Separated}:
+## :...native_country in {Cuba,Jamaica,NA,South,Puerto-Rico,Honduras,England,
+##     :                  Canada,Germany,Iran,Philippines,Poland,Cambodia,
+##     :                  Thailand,Ecuador,Laos,Haiti,Portugal,Dominican-Republic,
+##     :                  El-Salvador,Guatemala,China,Japan,Yugoslavia,Peru,
+##     :                  Outlying-US(Guam-USVI-etc),Scotland,Trinadad&amp;Tobago,
+##     :                  Greece,Nicaragua,Vietnam,Hong,Ireland,Hungary,
+##     :                  Holand-Netherlands}: &lt;=50K (4.2)
+##     native_country in {India,Mexico,Italy,Columbia,Taiwan,
+##     :                  France}: &gt;50K (8.4/0.3)
+##     native_country = United-States:
+##     :...age &lt;= 31: &lt;=50K (11.8)
+##         age &gt; 31: &gt;50K (81.6/36.8)
+## 
+## SubTree [S2]
+## 
+## relationship in {Own-child,Other-relative}: &lt;=50K (19/2)
+## relationship = Unmarried: &gt;50K (25/10)
+## relationship = Not-in-family:
+## :...capital_loss &gt; 1573: &lt;=50K (10)
+##     capital_loss &lt;= 1573:
+##     :...education in {HS-grad,11th,9th,Some-college,Assoc-acdm,Assoc-voc,
+##         :             7th-8th,Doctorate,Prof-school,5th-6th,10th,1st-4th,
+##         :             Preschool,12th}: &lt;=50K (0)
+##         education = Bachelors:
+##         :...capital_loss &lt;= 653: &lt;=50K (129/42)
+##         :   capital_loss &gt; 653: &gt;50K (6)
+##         education = Masters:
+##         :...workclass in {State-gov,Self-emp-not-inc}: &lt;=50K (7.1/2)
+##             workclass in {Federal-gov,Local-gov,NA,Self-emp-inc,Without-pay,
+##             :             Never-worked}: &gt;50K (12.2/3.2)
+##             workclass = Private:
+##             :...occupation in {Adm-clerical,Exec-managerial,Handlers-cleaners,
+##                 :              Other-service,Craft-repair,Transport-moving,
+##                 :              Farming-fishing,Machine-op-inspct,Tech-support,
+##                 :              NA,Protective-serv,Armed-Forces,
+##                 :              Priv-house-serv}: &gt;50K (11.2/2.2)
+##                 occupation = Sales: &lt;=50K (5.1/2)
+##                 occupation = Prof-specialty:
+##                 :...age &lt;= 53: &gt;50K (10/3)
+##                     age &gt; 53: &lt;=50K (7.3)
+## 
+## SubTree [S3]
+## 
+## workclass in {State-gov,Private,Federal-gov,Local-gov,NA,Self-emp-inc,
+## :             Without-pay,Never-worked}: &gt;50K (85.6/30.7)
+## workclass = Self-emp-not-inc: &lt;=50K (30.6/10.3)
+## 
+## SubTree [S4]
+## 
+## native_country in {Cuba,India,Puerto-Rico,Philippines,Columbia,Ecuador,Taiwan,
+## :                  Haiti,Dominican-Republic,Japan}: &lt;=50K (14.2/1.9)
+## native_country in {Jamaica,NA,Mexico,South,Honduras,England,Canada,Germany,
+## :                  Iran,Italy,Poland,Cambodia,Thailand,Laos,Portugal,
+## :                  El-Salvador,France,Guatemala,China,Yugoslavia,Peru,
+## :                  Outlying-US(Guam-USVI-etc),Scotland,Trinadad&amp;Tobago,Greece,
+## :                  Nicaragua,Vietnam,Hong,Ireland,Hungary,
+## :                  Holand-Netherlands}: &gt;50K (6.2/0.1)
+## native_country = United-States:
+## :...age &lt;= 26: &lt;=50K (45.3/14)
+##     age &gt; 26: &gt;50K (195.1/74.8)
+## 
+## SubTree [S5]
+## 
+## hours_per_week &lt;= 34: &lt;=50K (342/54)
+## hours_per_week &gt; 34:
+## :...occupation in {Handlers-cleaners,Other-service,Farming-fishing,NA,
+##     :              Armed-Forces,Priv-house-serv}: &lt;=50K (345.4/65.6)
+##     occupation in {Exec-managerial,Prof-specialty,Tech-support,Protective-serv}:
+##     :...workclass in {Private,Federal-gov,Local-gov,NA,Self-emp-inc,
+##     :   :             Without-pay,Never-worked}: &gt;50K (619.7/249.2)
+##     :   workclass in {State-gov,Self-emp-not-inc}:
+##     :   :...relationship = Husband: &lt;=50K (111.2/33)
+##     :       relationship = Wife: &gt;50K (8.4/3.2)
+##     occupation in {Adm-clerical,Sales,Craft-repair,Transport-moving,
+##     :              Machine-op-inspct}:
+##     :...occupation in {Transport-moving,Machine-op-inspct}: &lt;=50K (503.2/163.3)
+##         occupation in {Adm-clerical,Sales,Craft-repair}:
+##         :...workclass in {State-gov,Self-emp-not-inc,
+##             :             Local-gov}: &lt;=50K (223.7/76.4)
+##             workclass in {Federal-gov,NA,Self-emp-inc,Without-pay,
+##             :             Never-worked}: &gt;50K (149.5/66.9)
+##             workclass = Private:
+##             :...education in {HS-grad,11th,9th,Assoc-acdm,Assoc-voc,7th-8th,
+##                 :             5th-6th,10th,1st-4th,Preschool,
+##                 :             12th}: &lt;=50K (621.3/244.6)
+##                 education = Some-college:
+##                 :...hours_per_week &gt; 42: &gt;50K (97.9/39.6)
+##                     hours_per_week &lt;= 42:
+##                     :...age &lt;= 47: &lt;=50K (96.6/26)
+##                         age &gt; 47: &gt;50K (76.1/34.5)
+## 
+## 
+## Evaluation on training data (21000 cases):
+## 
+##      Decision Tree   
+##    ----------------  
+##    Size      Errors  
+## 
+##      72 2580(12.3%)   &lt;&lt;
+## 
+## 
+##     (a)   (b)    &lt;-classified as
+##    ----  ----
+##   15049   947    (a): class &lt;=50K
+##    1633  3371    (b): class &gt;50K
+## 
+## 
+##  Attribute usage:
+## 
+##  100.00% relationship
+##  100.00% capital_gain
+##   95.77% capital_loss
+##   82.60% education_num
+##   40.73% age
+##   40.11% education
+##   30.96% hours_per_week
+##   23.00% occupation
+##   10.05% workclass
+##    2.06% sex
+##    1.70% native_country
+##    0.56% marital_status
+##    0.10% fnlwgt
+## 
+## 
+## Time: 0.5 secs</code></pre>
+<p>最下面输出了Attribute usage，我上次分析出fnlwgt变量对model的预测没什么用，所以懒的类别化了，这里给出了结论。这个列表里面还有很多信息，可以慢慢琢磨。</p>
+</div>
+<div class="section level3">
+<h3>提高模型的性能</h3>
+<p>C5.0算法对于C4.5有一个改进就是添加了一种自适应增加（adaptive boosting）算法。所谓的boosting就是把多种算法的优势组合起来。在C50函数中添加参数trials=10就可以了。</p>
+<pre class="r"><code>adult_classifier &lt;- C5.0(income ~ ., data = adult_train, trials = 10)
+adult_classifier</code></pre>
+<pre><code>## 
+## Call:
+## C5.0.formula(formula = income ~ ., data = adult_train, trials = 10)
+## 
+## Classification Tree
+## Number of samples: 21000 
+## Number of predictors: 14 
+## 
+## Number of boosting iterations: 10 
+## Average tree size: 61.2 
+## 
+## Non-standard options: attempt to group attributes</code></pre>
+<pre class="r"><code>adult_predictions &lt;- predict(adult_classifier, adult_test[,-15])
+CrossTable(x = adult_test$income, y = adult_predictions,
+           prop.chisq=FALSE)</code></pre>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  11561 
+## 
+##  
+##                   | adult_predictions 
+## adult_test$income |     &lt;=50K |      &gt;50K | Row Total | 
+## ------------------|-----------|-----------|-----------|
+##             &lt;=50K |      8233 |       491 |      8724 | 
+##                   |     0.944 |     0.056 |     0.755 | 
+##                   |     0.888 |     0.215 |           | 
+##                   |     0.712 |     0.042 |           | 
+## ------------------|-----------|-----------|-----------|
+##              &gt;50K |      1041 |      1796 |      2837 | 
+##                   |     0.367 |     0.633 |     0.245 | 
+##                   |     0.112 |     0.785 |           | 
+##                   |     0.090 |     0.155 |           | 
+## ------------------|-----------|-----------|-----------|
+##      Column Total |      9274 |      2287 |     11561 | 
+##                   |     0.802 |     0.198 |           | 
+## ------------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<p>额，结局有点打脸，模型性能反而降低了，主要是之前的性能已经很好了啦。</p>
+</div>
+</div>
+<div class="section level2">
+<h2>小结</h2>
+<p>决策树的优点很明显，比如它可以高度自动化的处理数值型和名义型变量，还有缺失值也可以。而且模型解释起来也比较容易，一下就能够看懂。 缺点就不那么明显，比如容易过拟合或欠拟合，大特征的时候有偏等。</p>
+<p>总的来说，这是一个应用广泛的模型。</p>
+</div>
+
+<p>Copyright &copy; 2016 Affluence Tan. All rights reserved.</p>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

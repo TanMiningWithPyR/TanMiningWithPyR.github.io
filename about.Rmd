@@ -2,4 +2,6 @@
 title: "About This Website"
 ---
 
-这个是用R Markdown 做的
+谭夫有的博客
+
+本博客是利用R Markdown 制作完成的，在此感谢RStudio的开发人员。

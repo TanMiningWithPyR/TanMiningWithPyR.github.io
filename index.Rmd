@@ -1,5 +1,23 @@
 ---
-title: "Affluence Tan's Website"
+title: "这里是Affluence Tan/谭夫有的个人博客"
 ---
+个人照片  |     电子邮箱
+----------|------------------------
+![](tanf.jpg) |  fuyou_tan@sina.cn
 
-[数据模型学习前言](Preface.html)
+
+##自我描述：
+
+一个略懂IT的统计学人。
+
+## 技术文章：
+
+[数据模型学习--前言](Preface.html)
+
+[数据模型学习1--KNN](KNN.html)
+
+[数据模型学习2--聚类分析](kmean.html)
+
+[数据模型学习3--朴素贝叶斯](NB.html)
+
+[数据模型学习4--决策树](Decision_tree.html)

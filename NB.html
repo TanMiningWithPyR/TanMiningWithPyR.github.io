@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Affluence Tan" />
+
+
+<title>3.Naive Bayes</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Affluence Tan</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="about.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-gear"></span>
+     
+    More
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Preface.html">Data Modeling</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/TanMiningWithPyR">
+    <span class="fa fa-github"></span>
+     
+    github
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">3.Naive Bayes</h1>
+<h4 class="author"><em>Affluence Tan</em></h4>
+<h4 class="date"><em>January 3, 2017</em></h4>
+
+</div>
+
+
+<div class="section level2">
+<h2>简单理解朴素贝叶斯</h2>
+<p>朴素贝叶斯分类来自于贝叶斯定理的简单应用。</p>
+<div class="section level3">
+<h3>公式定义</h3>
+<p>假设某样本有n项特征（Feature），分别为<span class="math inline">\(F_1\)</span>、<span class="math inline">\(F_2\)</span>、…、<span class="math inline">\(F_n\)</span>。现有m个类别（Category），分别为<span class="math inline">\(C_1\)</span>、<span class="math inline">\(C_2\)</span>、…、<span class="math inline">\(C_m\)</span>。贝叶斯分类器就是计算出概率最大的那个分类，也就是求下面这个算式的最大值：</p>
+<p><span class="math inline">\(P(C|F_1F_2...F_n)=\frac{P(F_1F_2...F_n|C)P(C)}{P(F_1F_2...F_n)}\)</span></p>
+<p>由于<span class="math inline">\(P(F_1F_2...F_n)\)</span>对每一个分类都是相同的，可以省。所以就变成了求下面公式的最大值：</p>
+<p><span class="math inline">\(P(F_1F_2...F_n|C)P(C)\)</span></p>
+</div>
+<div class="section level3">
+<h3>什么是朴素</h3>
+<p>朴素是假设所有特征都彼此独立，这个假设也是其缺点。因此公式变成了：</p>
+<p><span class="math inline">\(P(F_1F_2...F_n|C)P(C)=P(F_1|C)P(F_2|C)...P(F_n|C)P(C)\)</span></p>
+</div>
+<div class="section level3">
+<h3>拉普拉斯估计</h3>
+<p>当其中一个特征的似然概率为0时，由于上面公式连乘的原因，后验概率一定为0。这个在通常情况下将没有意义。这时候，可以使用拉普拉斯估计解决，在频率表的每个计数上面加一个比较小的数，通常为1。</p>
+</div>
+<div class="section level3">
+<h3>朴素贝叶斯的变量</h3>
+<p>运用朴素贝叶斯分类，变量应该都是离散型变量，如果是连续型变量，要先分段。太少的分段会导致信息量减少，重要趋势被掩盖，太多分段导致频率的计数值太小。</p>
+</div>
+</div>
+<div id="r" class="section level2">
+<h2>R实战</h2>
+<div class="section level3">
+<h3>获取数据集</h3>
+<pre class="r"><code>library(readr)
+adult &lt;- read_csv(&quot;adult.csv&quot;,na=&quot;?&quot;)
+adult$income = as.factor(adult$income)
+str(adult)</code></pre>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    32561 obs. of  15 variables:
+##  $ age           : int  39 50 38 53 28 37 49 52 31 42 ...
+##  $ workclass     : chr  &quot;State-gov&quot; &quot;Self-emp-not-inc&quot; &quot;Private&quot; &quot;Private&quot; ...
+##  $ fnlwgt        : int  77516 83311 215646 234721 338409 284582 160187 209642 45781 159449 ...
+##  $ education     : chr  &quot;Bachelors&quot; &quot;Bachelors&quot; &quot;HS-grad&quot; &quot;11th&quot; ...
+##  $ education_num : int  13 13 9 7 13 14 5 9 14 13 ...
+##  $ marital_status: chr  &quot;Never-married&quot; &quot;Married-civ-spouse&quot; &quot;Divorced&quot; &quot;Married-civ-spouse&quot; ...
+##  $ occupation    : chr  &quot;Adm-clerical&quot; &quot;Exec-managerial&quot; &quot;Handlers-cleaners&quot; &quot;Handlers-cleaners&quot; ...
+##  $ relationship  : chr  &quot;Not-in-family&quot; &quot;Husband&quot; &quot;Not-in-family&quot; &quot;Husband&quot; ...
+##  $ race          : chr  &quot;White&quot; &quot;White&quot; &quot;White&quot; &quot;Black&quot; ...
+##  $ sex           : chr  &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; ...
+##  $ capital_gain  : int  2174 0 0 0 0 0 0 0 14084 5178 ...
+##  $ capital_loss  : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ hours_per_week: int  40 13 40 40 40 40 16 45 50 40 ...
+##  $ native_country: chr  &quot;United-States&quot; &quot;United-States&quot; &quot;United-States&quot; &quot;United-States&quot; ...
+##  $ income        : Factor w/ 2 levels &quot;&lt;=50K&quot;,&quot;&gt;50K&quot;: 1 1 1 1 1 1 1 2 2 2 ...</code></pre>
+<p>这个是美国成人的人口统计资料，要预测的是income这个变量。</p>
+</div>
+<div class="section level3">
+<h3>探索和准备数据集</h3>
+<pre class="r"><code>library(Hmisc)
+library(ggplot2)
+library(dplyr)</code></pre>
+<pre class="r"><code>describe(adult)</code></pre>
+<pre><code>## adult 
+## 
+##  15  Variables      32561  Observations
+## ---------------------------------------------------------------------------
+## age 
+##       n missing  unique    Mean     .05     .10     .25     .50     .75 
+##   32561       0      73   38.58      19      22      28      37      48 
+##     .90     .95 
+##      58      63 
+## 
+## lowest : 17 18 19 20 21, highest: 85 86 87 88 90 
+## ---------------------------------------------------------------------------
+## workclass 
+##       n missing  unique 
+##   30725    1836       8 
+## 
+## Federal-gov (960, 3%), Local-gov (2093, 7%) 
+## Never-worked (7, 0%), Private (22696, 74%) 
+## Self-emp-inc (1116, 4%) 
+## Self-emp-not-inc (2541, 8%) 
+## State-gov (1298, 4%), Without-pay (14, 0%) 
+## ---------------------------------------------------------------------------
+## fnlwgt 
+##       n missing  unique    Mean     .05     .10     .25     .50     .75 
+##   32561       0   21648  189778   39460   65716  117827  178356  237051 
+##     .90     .95 
+##  329054  379682 
+## 
+## lowest :   12285   13769   14878   18827   19214
+## highest: 1226583 1268339 1366120 1455435 1484705 
+## ---------------------------------------------------------------------------
+## education 
+##       n missing  unique 
+##   32561       0      16 
+## 
+##           10th 11th 12th 1st-4th 5th-6th 7th-8th 9th Assoc-acdm Assoc-voc
+## Frequency  933 1175  433     168     333     646 514       1067      1382
+## %            3    4    1       1       1       2   2          3         4
+##           Bachelors Doctorate HS-grad Masters Preschool Prof-school
+## Frequency      5355       413   10501    1723        51         576
+## %                16         1      32       5         0           2
+##           Some-college
+## Frequency         7291
+## %                   22
+## ---------------------------------------------------------------------------
+## education_num 
+##       n missing  unique    Mean     .05     .10     .25     .50     .75 
+##   32561       0      16   10.08       5       7       9      10      12 
+##     .90     .95 
+##      13      14 
+## 
+##            1   2   3   4   5   6    7   8     9   10   11   12   13   14
+## Frequency 51 168 333 646 514 933 1175 433 10501 7291 1382 1067 5355 1723
+## %          0   1   1   2   2   3    4   1    32   22    4    3   16    5
+##            15  16
+## Frequency 576 413
+## %           2   1
+## ---------------------------------------------------------------------------
+## marital_status 
+##       n missing  unique 
+##   32561       0       7 
+## 
+## Divorced (4443, 14%), Married-AF-spouse (23, 0%) 
+## Married-civ-spouse (14976, 46%) 
+## Married-spouse-absent (418, 1%) 
+## Never-married (10683, 33%) 
+## Separated (1025, 3%), Widowed (993, 3%) 
+## ---------------------------------------------------------------------------
+## occupation 
+##       n missing  unique 
+##   30718    1843      14 
+## 
+## Adm-clerical (3770, 12%), Armed-Forces (9, 0%) 
+## Craft-repair (4099, 13%) 
+## Exec-managerial (4066, 13%) 
+## Farming-fishing (994, 3%) 
+## Handlers-cleaners (1370, 4%) 
+## Machine-op-inspct (2002, 7%) 
+## Other-service (3295, 11%) 
+## Priv-house-serv (149, 0%) 
+## Prof-specialty (4140, 13%) 
+## Protective-serv (649, 2%), Sales (3650, 12%) 
+## Tech-support (928, 3%), Transport-moving (1597, 5%) 
+## ---------------------------------------------------------------------------
+## relationship 
+##       n missing  unique 
+##   32561       0       6 
+## 
+##           Husband Not-in-family Other-relative Own-child Unmarried Wife
+## Frequency   13193          8305            981      5068      3446 1568
+## %              41            26              3        16        11    5
+## ---------------------------------------------------------------------------
+## race 
+##       n missing  unique 
+##   32561       0       5 
+## 
+## Amer-Indian-Eskimo (311, 1%) 
+## Asian-Pac-Islander (1039, 3%) 
+## Black (3124, 10%), Other (271, 1%), White (27816, 85%) 
+## ---------------------------------------------------------------------------
+## sex 
+##       n missing  unique 
+##   32561       0       2 
+## 
+## Female (10771, 33%), Male (21790, 67%) 
+## ---------------------------------------------------------------------------
+## capital_gain 
+##       n missing  unique    Mean     .05     .10     .25     .50     .75 
+##   32561       0     119    1078       0       0       0       0       0 
+##     .90     .95 
+##       0    5013 
+## 
+## lowest :     0   114   401   594   914
+## highest: 25236 27828 34095 41310 99999 
+## ---------------------------------------------------------------------------
+## capital_loss 
+##       n missing  unique    Mean     .05     .10     .25     .50     .75 
+##   32561       0      92    87.3       0       0       0       0       0 
+##     .90     .95 
+##       0       0 
+## 
+## lowest :    0  155  213  323  419, highest: 3004 3683 3770 3900 4356 
+## ---------------------------------------------------------------------------
+## hours_per_week 
+##       n missing  unique    Mean     .05     .10     .25     .50     .75 
+##   32561       0      94   40.44      18      24      40      40      45 
+##     .90     .95 
+##      55      60 
+## 
+## lowest :  1  2  3  4  5, highest: 95 96 97 98 99 
+## ---------------------------------------------------------------------------
+## native_country 
+##       n missing  unique 
+##   31978     583      41 
+## 
+## lowest : Cambodia        Canada          China           Columbia        Cuba           
+## highest: Thailand        Trinadad&amp;Tobago United-States   Vietnam         Yugoslavia      
+## ---------------------------------------------------------------------------
+## income 
+##       n missing  unique 
+##   32561       0       2 
+## 
+## &lt;=50K (24720, 76%), &gt;50K (7841, 24%) 
+## ---------------------------------------------------------------------------</code></pre>
+<p>从上面的结果可以看到，数据中有一些缺失值。但是据说朴素贝叶斯对缺失值不敏感。所以先不管。 最后一个变量是预测变量，分别是大于50K和小于等于50K。并且给出了比例24%和76%。下面切分数据集。</p>
+<pre class="r"><code># create training and test data
+adult_train &lt;- adult[1:21000, ]
+adult_test &lt;- adult[21001:32561, ]</code></pre>
+</div>
+<div class="section level3">
+<h3>基于数据集训练模型</h3>
+<pre class="r"><code># load the &quot;e1701&quot; library
+library(e1071)
+adult_classifier &lt;- naiveBayes(income ~ ., data = adult_train,laplace = 1)
+adult_predictions &lt;- predict(adult_classifier, adult_test[,-15])</code></pre>
+<p>查阅了一下e1071的帮助文档，naiveBayes的data变量接受数值型变量和分类型变量。前面提到，朴素贝叶斯只能用于分类型变量，估计函数自动进行了转化。</p>
+</div>
+<div class="section level3">
+<h3>评估模型性能</h3>
+<pre class="r"><code># load the &quot;gmodels&quot; library
+library(gmodels)
+library(ROCR)</code></pre>
+<pre><code>## Loading required package: gplots</code></pre>
+<pre><code>## 
+## Attaching package: &#39;gplots&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     lowess</code></pre>
+<pre class="r"><code># Create the cross tabulation of predicted vs. actual
+CrossTable(x = adult_test$income, y = adult_predictions,
+           prop.chisq=FALSE)</code></pre>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  11561 
+## 
+##  
+##                   | adult_predictions 
+## adult_test$income |     &lt;=50K |      &gt;50K | Row Total | 
+## ------------------|-----------|-----------|-----------|
+##             &lt;=50K |      8337 |       387 |      8724 | 
+##                   |     0.956 |     0.044 |     0.755 | 
+##                   |     0.804 |     0.323 |           | 
+##                   |     0.721 |     0.033 |           | 
+## ------------------|-----------|-----------|-----------|
+##              &gt;50K |      2027 |       810 |      2837 | 
+##                   |     0.714 |     0.286 |     0.245 | 
+##                   |     0.196 |     0.677 |           | 
+##                   |     0.175 |     0.070 |           | 
+## ------------------|-----------|-----------|-----------|
+##      Column Total |     10364 |      1197 |     11561 | 
+##                   |     0.896 |     0.104 |           | 
+## ------------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<pre class="r"><code>adult_predictions_prob &lt;- predict(adult_classifier, adult_test[,-15],type = &quot;raw&quot;)
+pred &lt;- prediction(predictions = adult_predictions_prob[,2] ,labels = adult_test$income)
+perf.auc &lt;- performance(pred,measure = &quot;auc&quot;)
+str(perf.auc)</code></pre>
+<pre><code>## Formal class &#39;performance&#39; [package &quot;ROCR&quot;] with 6 slots
+##   ..@ x.name      : chr &quot;None&quot;
+##   ..@ y.name      : chr &quot;Area under the ROC curve&quot;
+##   ..@ alpha.name  : chr &quot;none&quot;
+##   ..@ x.values    : list()
+##   ..@ y.values    :List of 1
+##   .. ..$ : num 0.814
+##   ..@ alpha.values: list()</code></pre>
+<pre class="r"><code>perf &lt;- performance(pred,measure = &quot;tpr&quot;, x.measure = &quot;fpr&quot;)
+plot(perf, main = &quot;ROC curve for &gt;50K filter&quot;, col =&quot;blue&quot;,lwd = 3)
+abline(a=0,b=1,lwd =2,lty =2)</code></pre>
+<p><img src="NB_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>可以看到，模型的准确度为0.721+0.070 = 0.791，也就是说79.1是预测正确了，乍一看不错，但是我们知道，即便没有模型，全部评判为收入不到50k,我们也可以有76%的准确度，模型的效果有限。而且在收入大于50K的人群中，只有28.6%的人被挑选出来了，模型还需要改进。</p>
+<p>ROC曲线这里先不解释。</p>
+</div>
+<div class="section level3">
+<h3>提高模型性能</h3>
+<p>之前提到，我不太清楚e1071包中的naiveBayes是如何给连续变量转化为类别型的。现在我自己来做这件事，看看能不能提高模型的预测。</p>
+<p>先画图考察一下连续变量。</p>
+<pre class="r"><code># plot histogram 
+varname &lt;- c(&quot;age&quot;,&quot;fnlwgt&quot;,&quot;education_num&quot;,&quot;capital_gain&quot;,&quot;capital_loss&quot;,&quot;hours_per_week&quot;)
+adult_continuous &lt;- adult[varname]
+adult_continuous$income = adult$income
+
+g_age &lt;- ggplot(data = adult_continuous,aes(x=age,fill=income))
+g_age + geom_bar()+facet_grid(income ~ .)</code></pre>
+<pre><code>## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.
+## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.</code></pre>
+<p><img src="NB_files/figure-html/improve%20model%20performance-1-1.png" width="672" /></p>
+<pre class="r"><code>g_fnlwgt &lt;- ggplot(data = adult_continuous,aes(x=fnlwgt,fill=income))
+g_fnlwgt + geom_bar()+facet_grid(income ~ .)</code></pre>
+<pre><code>## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.
+## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.</code></pre>
+<p><img src="NB_files/figure-html/improve%20model%20performance-1-2.png" width="672" /></p>
+<pre class="r"><code>g_education &lt;- ggplot(data = adult_continuous,aes(x=education_num,fill=income))
+g_education + geom_bar()+facet_grid(income ~ .)</code></pre>
+<pre><code>## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.
+## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.</code></pre>
+<p><img src="NB_files/figure-html/improve%20model%20performance-1-3.png" width="672" /></p>
+<pre class="r"><code>g_gain &lt;- ggplot(data = adult_continuous,aes(x=capital_gain,fill=income))
+g_gain + geom_bar()+facet_grid(income ~ .)</code></pre>
+<pre><code>## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.
+## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.</code></pre>
+<p><img src="NB_files/figure-html/improve%20model%20performance-1-4.png" width="672" /></p>
+<pre class="r"><code>g_loss &lt;- ggplot(data = adult_continuous,aes(x=capital_loss,fill=income))
+g_loss + geom_bar()+facet_grid(income ~ .)</code></pre>
+<pre><code>## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.
+## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.</code></pre>
+<p><img src="NB_files/figure-html/improve%20model%20performance-1-5.png" width="672" /></p>
+<pre class="r"><code>g_hours &lt;- ggplot(data = adult_continuous,aes(x=hours_per_week,fill=income))
+g_hours + geom_bar()+facet_grid(income ~ .)</code></pre>
+<pre><code>## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.
+## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.</code></pre>
+<p><img src="NB_files/figure-html/improve%20model%20performance-1-6.png" width="672" /></p>
+<p>可以看到fnlwgt变量没有什么影响，所以就不做离散化处理了。capital_gain和capital_loss 有太多0，先把0去掉再画一下直方图。</p>
+<pre class="r"><code>capital_gain_remove0 = filter(.data = adult,capital_gain &gt; 0)
+g_gain &lt;- ggplot(data = capital_gain_remove0,aes(x=capital_gain,fill=income))
+g_gain + geom_bar() + facet_grid(income ~ .)</code></pre>
+<pre><code>## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.
+## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.</code></pre>
+<p><img src="NB_files/figure-html/improve%20model%20performance-hist-1.png" width="672" /></p>
+<pre class="r"><code>capital_loss_remove0 = filter(.data = adult,capital_loss &gt; 0)
+g_loss &lt;- ggplot(data = capital_loss_remove0,aes(x=capital_loss,fill=income))
+g_loss + geom_bar() + facet_grid(income ~ .)</code></pre>
+<pre><code>## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.
+## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust this.</code></pre>
+<p><img src="NB_files/figure-html/improve%20model%20performance-hist-2.png" width="672" /></p>
+<p>现在做类别化处理</p>
+<pre class="r"><code>adult_str &lt;- adult
+
+adult_str$age &lt;- as.factor(floor(adult$age / 10))
+
+adult_str$education_num &lt;- as.factor(adult$education_num)
+# capital_gain discretization according to histogram
+capital_gain &lt;- adult$capital_gain
+capital_gain &lt;- ifelse(capital_gain &lt;6000 &amp; capital_gain &gt;0, 1 ,capital_gain)
+capital_gain &lt;- ifelse(capital_gain &lt;30000 &amp; capital_gain &gt;=6000, 2 ,capital_gain)
+capital_gain &lt;- ifelse(capital_gain &lt;60000 &amp; capital_gain &gt;=30000, 3 ,capital_gain)
+capital_gain &lt;- ifelse(capital_gain &gt;=60000, 4 ,capital_gain)
+adult_str$capital_gain &lt;- as.factor(capital_gain)
+# capital_loss discretization according to histogram
+capital_loss &lt;- adult$capital_loss
+capital_loss &lt;- ifelse(capital_loss &lt;1400 &amp; capital_loss &gt;0, 1 ,capital_loss)
+capital_loss &lt;- ifelse(capital_loss &lt;1700 &amp; capital_loss &gt;=1400, 2 ,capital_loss)
+capital_loss &lt;- ifelse(capital_loss &lt;2200 &amp; capital_loss &gt;=1700, 3 ,capital_loss)
+capital_loss &lt;- ifelse(capital_loss &lt;3000 &amp; capital_loss &gt;=2200, 4 ,capital_loss)
+capital_loss &lt;- ifelse(capital_loss &gt;=3000, 5 ,capital_loss)
+adult_str$capital_loss &lt;- as.factor(capital_loss)
+
+adult_str$hours_per_week &lt;- as.factor(floor(adult$hours_per_week / 10))</code></pre>
+<p>在capital_gain和capital_loss这两个变量上面我多花了点心思，下面重新拟合模型。</p>
+<pre class="r"><code># create training and test data
+adult_train &lt;- adult_str[1:21000, ]
+adult_test &lt;- adult_str[21001:32561, ]
+# build model
+adult_classifier &lt;- naiveBayes(income ~ ., data = adult_train,laplace = 1)
+adult_predictions &lt;- predict(adult_classifier, adult_test[,-15])</code></pre>
+<pre class="r"><code># Create the cross tabulation of predicted vs. actual
+CrossTable(x = adult_test$income, y = adult_predictions,
+           prop.chisq=FALSE)</code></pre>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  11561 
+## 
+##  
+##                   | adult_predictions 
+## adult_test$income |     &lt;=50K |      &gt;50K | Row Total | 
+## ------------------|-----------|-----------|-----------|
+##             &lt;=50K |      8127 |       597 |      8724 | 
+##                   |     0.932 |     0.068 |     0.755 | 
+##                   |     0.851 |     0.297 |           | 
+##                   |     0.703 |     0.052 |           | 
+## ------------------|-----------|-----------|-----------|
+##              &gt;50K |      1424 |      1413 |      2837 | 
+##                   |     0.502 |     0.498 |     0.245 | 
+##                   |     0.149 |     0.703 |           | 
+##                   |     0.123 |     0.122 |           | 
+## ------------------|-----------|-----------|-----------|
+##      Column Total |      9551 |      2010 |     11561 | 
+##                   |     0.826 |     0.174 |           | 
+## ------------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<p>可以看到，模型的预测准确率有了提升(0.703+0.122=0.825),更为关键的是对收入大于50K的人群的预测有提升。精确度和回溯率分别为0.703和0.498。</p>
+</div>
+</div>
+<div class="section level2">
+<h2>小结</h2>
+<p>上面的模型改进也可以看到，朴素贝叶斯模型比较适合于类别变量，不同的连续变量类别化的方法会对模型精度产生比较大的影响。</p>
+<p>朴素贝叶斯更加典型的应用场景是在过滤垃圾邮件分类的方面。</p>
+<p><a href="Decision_tree.html">数据模型学习4–决策树</a></p>
+</div>
+
+<p>Copyright &copy; 2016 Affluence Tan. All rights reserved.</p>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

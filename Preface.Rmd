@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 本系列的文章是关于所学数据模型的一系列的总结。我会尽量涵盖目前已有的机器学习和统计学的常规模型，进行概括性，同时又最通俗易懂的汇总。所以文体可能五花八门，口语也会用的比较多，有些术语不是正式的定义，只是一些个人见解。所以在阅读的过程中，要参考一下教科书，或者本身对基本概念有点了解。 
 
-本系列文章以R语言为主要的研究工具。使用到哪些安装包都会在具体的文章中指出。同时，作为尝鲜，使用了R Markdown来写这些文章。所有的原始文档都会放在[GitHub](https://github.com/TanMiningWithPyR)上。
+本系列文章以R语言为主要的研究工具。使用到哪些安装包都会在具体的文章中指出。同时，作为尝鲜，使用了R Markdown来写这些文章。所有的原始文档都会放在[GitHub](https://github.com/TanMiningWithPyR/modeling)上。
 
   
 ## 有监督学习和无监督学习
@@ -28,4 +28,4 @@ knitr::opts_chunk$set(echo = TRUE)
   
 让我们从最简单的但是确有用的近邻分类(k-Nearest Neighbour)开始。
 
-
+[数据模型学习1--KNN](KNN.html)
