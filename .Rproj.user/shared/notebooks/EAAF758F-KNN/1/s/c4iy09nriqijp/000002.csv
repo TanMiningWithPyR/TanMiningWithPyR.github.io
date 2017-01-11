@@ -1,0 +1,4 @@
+"0","# load the ""class"" library"
+"0","library(class)"
+"0","wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,"
+"0","                      cl = wbcd_train_labels, k=21)"

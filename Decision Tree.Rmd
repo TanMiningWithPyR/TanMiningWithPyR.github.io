@@ -151,3 +151,7 @@ CrossTable(x = adult_test$income, y = adult_predictions,
 缺点就不那么明显，比如容易过拟合或欠拟合，大特征的时候有偏等。
 
 总的来说，这是一个应用广泛的模型。
+
+[数据模型学习5--模型性能评估](Model_Performance.html)
+
+[系列文章首页](Preface.html)

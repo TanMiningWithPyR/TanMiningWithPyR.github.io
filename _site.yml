@@ -14,6 +14,8 @@ navbar:
       menu:
         - text: "Data Modeling"
           href: Preface.html
+        - text: "Programming skill"
+          href: Preface_programming.html        
   right:
     - text: "github"
       icon: fa-github

@@ -203,6 +203,9 @@ $(document).ready(function () {
     <li>
       <a href="Preface.html">Data Modeling</a>
     </li>
+    <li>
+      <a href="Preface_programming.html">Programming skill</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -383,7 +386,7 @@ summary(adult_classifier)</code></pre>
 ## C5.0.formula(formula = income ~ ., data = adult_train)
 ## 
 ## 
-## C5.0 [Release 2.07 GPL Edition]      Fri Jan 06 18:40:03 2017
+## C5.0 [Release 2.07 GPL Edition]      Wed Jan 11 11:04:20 2017
 ## -------------------------------
 ## 
 ## Class specified by attribute `outcome&#39;
@@ -614,7 +617,7 @@ summary(adult_classifier)</code></pre>
 ##    0.10% fnlwgt
 ## 
 ## 
-## Time: 0.5 secs</code></pre>
+## Time: 0.3 secs</code></pre>
 <p>最下面输出了Attribute usage，我上次分析出fnlwgt变量对model的预测没什么用，所以懒的类别化了，这里给出了结论。这个列表里面还有很多信息，可以慢慢琢磨。</p>
 </div>
 <div class="section level3">
@@ -676,6 +679,8 @@ CrossTable(x = adult_test$income, y = adult_predictions,
 <h2>小结</h2>
 <p>决策树的优点很明显，比如它可以高度自动化的处理数值型和名义型变量，还有缺失值也可以。而且模型解释起来也比较容易，一下就能够看懂。 缺点就不那么明显，比如容易过拟合或欠拟合，大特征的时候有偏等。</p>
 <p>总的来说，这是一个应用广泛的模型。</p>
+<p><a href="Model_Performance.html">数据模型学习5–模型性能评估</a></p>
+<p><a href="Preface.html">系列文章首页</a></p>
 </div>
 
 <p>Copyright &copy; 2016 Affluence Tan. All rights reserved.</p>

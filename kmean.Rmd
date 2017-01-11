@@ -74,3 +74,5 @@ iris_by_species
 kmean与KNN的改进方式类似。当然，除了kmean，聚类的方法还有很多，比如层次聚类。
 
 [数据模型学习3--朴素贝叶斯](NB.html)
+
+[系列文章首页](Preface.html)

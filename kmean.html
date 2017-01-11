@@ -204,6 +204,9 @@ $(document).ready(function () {
     <li>
       <a href="Preface.html">Data Modeling</a>
     </li>
+    <li>
+      <a href="Preface_programming.html">Programming skill</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -294,13 +297,13 @@ iris_n &lt;- as.data.frame(scale(iris[-5]))</code></pre>
 <p>评估聚类的结果是主观的，最终要看聚类的结果是不是对分析实际业务有用。可以先看一下每个cluster的大小和质心。</p>
 <pre class="r"><code># look at the size of the clusters
 iris_clusters$size</code></pre>
-<pre><code>## [1] 21 96 33</code></pre>
+<pre><code>## [1] 50 53 47</code></pre>
 <pre class="r"><code># look at the cluster centers
 iris_clusters$centers</code></pre>
 <pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width
-## 1   -1.3232208  -0.3718921   -1.1334386  -1.1111395
-## 2    0.5690971  -0.3705265    0.6888118   0.6609378
-## 3   -0.8135055   1.3145538   -1.2825372  -1.2156393</code></pre>
+## 1  -1.01119138  0.85041372   -1.3006301  -1.2507035
+## 2  -0.05005221 -0.88042696    0.3465767   0.2805873
+## 3   1.13217737  0.08812645    0.9928284   1.0141287</code></pre>
 <p>我们把原始的Species变量求平均，与上面的质心对比一下。</p>
 <pre class="r"><code>library(dplyr)</code></pre>
 <pre class="r"><code>iris_n$Species &lt;- iris$Species
@@ -318,6 +321,7 @@ iris_by_species</code></pre>
 <h3>模型改进</h3>
 <p>kmean与KNN的改进方式类似。当然，除了kmean，聚类的方法还有很多，比如层次聚类。</p>
 <p><a href="NB.html">数据模型学习3–朴素贝叶斯</a></p>
+<p><a href="Preface.html">系列文章首页</a></p>
 </div>
 </div>
 

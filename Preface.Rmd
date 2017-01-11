@@ -28,4 +28,8 @@ knitr::opts_chunk$set(echo = TRUE)
   
 让我们从最简单的但是确有用的近邻分类(k-Nearest Neighbour)开始。
 
-[数据模型学习1--KNN](KNN.html)
+* [数据模型学习1--KNN](KNN.html)  
+* [数据模型学习2--聚类分析](kmean.html)  
+* [数据模型学习3--朴素贝叶斯](NB.html)
+* [数据模型学习4--决策树](Decision_Tree.html)
+* [数据模型学习5--模型性能评估](Model_Performance.html)

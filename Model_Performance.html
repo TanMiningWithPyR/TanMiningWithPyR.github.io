@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Affluence Tan" />
+
+
+<title>Evaluating model performance</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Affluence Tan</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="about.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-gear"></span>
+     
+    More
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Preface.html">Data Modeling</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/TanMiningWithPyR">
+    <span class="fa fa-github"></span>
+     
+    github
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Evaluating model performance</h1>
+<h4 class="author"><em>Affluence Tan</em></h4>
+<h4 class="date"><em>January 9, 2017</em></h4>
+
+</div>
+
+
+<div class="section level2">
+<h2>模型的性能评价</h2>
+<p>在这一章节，让我们先从各种模型中抽出身来，回顾和总结一下模型性能评价这件事。</p>
+<div class="section level3">
+<h3>分类模型的数据预测</h3>
+<p>我们通常会用到三种数据来评价分类器：</p>
+<ul>
+<li>真实的分类值</li>
+<li>分类器预测的分类值</li>
+<li>分类器预测的估计概率</li>
+</ul>
+<p>其中，真实值来自数据集本身，预测值一般用R中的函数predict()来计算出了，要得到概率一般要指定参数type = “raw” 或 “prob”等。</p>
+</div>
+<div class="section level3">
+<h3>再探混淆矩阵</h3>
+<p>我们在之前的分类器模型中，一直用到了混淆矩阵。混淆矩阵其实是一张二维表。我们把感兴趣的类别叫做阳性（positive），其他的所有类别叫做阴性（negative）。那么我们现在存在4种分类：</p>
+<ul>
+<li>真阳性（True Positive, TP）：正确的分类为感兴趣的类别。</li>
+<li>真阴性（True Negative, TN）：正确的分类为不感兴趣的类别。</li>
+<li>假阳性（False Positive, FP）：错误的分类为感兴趣的类别。</li>
+<li>假阴性（False Negative, FN）：错误的分类为不感兴趣的类别。</li>
+</ul>
+<p>由这四种类别可以引出一系列的性能度量,先看一下前几章出现的混淆矩阵是长成什么养的，然后一一评说。</p>
+<pre><code>## 
+##  
+##    Cell Contents
+## |-------------------------|
+## |                       N |
+## |           N / Row Total |
+## |           N / Col Total |
+## |         N / Table Total |
+## |-------------------------|
+## 
+##  
+## Total Observations in Table:  11561 
+## 
+##  
+##                   | adult_predictions 
+## adult_test$income |     &lt;=50K |      &gt;50K | Row Total | 
+## ------------------|-----------|-----------|-----------|
+##             &lt;=50K |      8337 |       387 |      8724 | 
+##                   |     0.956 |     0.044 |     0.755 | 
+##                   |     0.804 |     0.323 |           | 
+##                   |     0.721 |     0.033 |           | 
+## ------------------|-----------|-----------|-----------|
+##              &gt;50K |      2027 |       810 |      2837 | 
+##                   |     0.714 |     0.286 |     0.245 | 
+##                   |     0.196 |     0.677 |           | 
+##                   |     0.175 |     0.070 |           | 
+## ------------------|-----------|-----------|-----------|
+##      Column Total |     10364 |      1197 |     11561 | 
+##                   |     0.896 |     0.104 |           | 
+## ------------------|-----------|-----------|-----------|
+## 
+## </code></pre>
+<div class="section level4">
+<h4>准确度和错误率</h4>
+<p>准确度： <span class="math inline">\(accuracy = \frac{TP + TN}{TP + TN + FP + FN }\)</span> 错误率： <span class="math inline">\(error rate = 1 - accuracy\)</span></p>
+<p>对应上面的R输出的混淆矩阵，右下角为TP，左上角为TN，右上角为FP，左下角为FN。 所以准确度为： <span class="math inline">\(\frac{810 + 8337}{810 + 8337 + 387 + 2027 } = \frac{9147}{11561} = 0.791\)</span>。</p>
+<p>Cell Contents也给出了详细的解释。</p>
+</div>
+<div class="section level4">
+<h4>灵敏度和特异性</h4>
+<p>灵敏度：度量了阳性样本被正确分类的比例 <span class="math inline">\(\frac{TP}{TP + FN }\)</span> 特异性：度量了阴性样本被正确分类的比例 <span class="math inline">\(\frac{TN}{TN + FP }\)</span></p>
+<p>在上面的例子中，TP单元格的第二行0.286就是灵敏度了，而TN单元格的第二行0.956就是特异性。有时一个模型的这两个特征不可兼得。</p>
+</div>
+<div class="section level4">
+<h4>精确度和回溯精确度</h4>
+<p>精确度：度量了正阳性在所有预测为阳性案例中的比例。<span class="math inline">\(\frac{TP}{TP + FP }\)</span> 回溯精确度：度量了阳性结果的完备性，它的公式和灵敏度是一样的。</p>
+<p>上述例子中，精确度在TP单元格的第三行0.677。与灵敏度和特异性一样，同时具有高精确度和高回溯精确度也是一件很困难的事情。</p>
+</div>
+<div id="roc" class="section level4">
+<h4>ROC曲线</h4>
+<p>ROC曲线是将真阳性和假阳性可视化的一个手段。在R中可以用ROCR包来绘制ROC图。</p>
+<pre class="r"><code>library(ROCR)
+adult_predictions_prob &lt;- predict(adult_classifier, adult_test[,-15],type = &quot;raw&quot;)
+pred &lt;- prediction(predictions = adult_predictions_prob[,2] ,labels = adult_test$income)
+perf &lt;- performance(pred,measure = &quot;tpr&quot;, x.measure = &quot;fpr&quot;)
+plot(perf, main = &quot;ROC curve for &gt;50K filter&quot;, col =&quot;blue&quot;,lwd = 3)
+abline(a=0,b=1,lwd =2,lty =2)</code></pre>
+<p><img src="Model_Performance_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>对角虚线表示没有价值的分类器，因为这种分类器发现真阳性和假阳性的比率完全相同，代表它没法区分两者的差别。如果ROC曲线比较靠近这条线，代表模型不是很有用。</p>
+<p>反之，完美的分类器拥有一条穿过100%的真阳性和0%的假阴性的曲线。</p>
+<p>而真实的分类器位于两者之间，如图中的蓝线。</p>
+<p>同时我们可以计算ROC曲线下的面积来度量模型的性能。一般来说：</p>
+<ul>
+<li>0.9到1.0 优秀</li>
+<li>0.8到0.9 良好</li>
+<li>0.7到0.8 一般</li>
+<li>0.6到0.7 很差</li>
+<li>0.5到0.6 无用</li>
+</ul>
+<pre class="r"><code>perf.auc &lt;- performance(pred,measure = &quot;auc&quot;)
+str(perf.auc)</code></pre>
+<pre><code>## Formal class &#39;performance&#39; [package &quot;ROCR&quot;] with 6 slots
+##   ..@ x.name      : chr &quot;None&quot;
+##   ..@ y.name      : chr &quot;Area under the ROC curve&quot;
+##   ..@ alpha.name  : chr &quot;none&quot;
+##   ..@ x.values    : list()
+##   ..@ y.values    :List of 1
+##   .. ..$ : num 0.814
+##   ..@ alpha.values: list()</code></pre>
+<p>在上面的输出perf.auc中 有个num 0.814就是ROC曲线下的面积。</p>
+</div>
+<div id="kappa-" class="section level4">
+<h4>Kappa 统计量</h4>
+<p>其目的是要修正准确度，去除掉应巧合而预测正确的概率。其公式为</p>
+<p><span class="math inline">\(k=\frac{Pr(a)-Pr(e)}{1-Pr(e)}\)</span></p>
+<p>其中<span class="math inline">\(Pr(a)\)</span>是真实一致性，也就是准确度。<span class="math inline">\(Pr(e)\)</span>是期望一致性，也就是完全偶然性导致的预测值和实际值的一致性，它的值也在0到1之间。</p>
+<p>Pr(e) = Pr(actual_type is Positive) * Pr(predicted_type is Positive) +<br />
+Pr(actual_type is Negative) * Pr(predicted_type is Negative)</p>
+<p>在上面的例子里面，就是</p>
+<pre class="r"><code>pr_e &lt;- 0.245*0.104+0.755*0.896
+pr_a &lt;- 0.721+0.070
+pr_e</code></pre>
+<pre><code>## [1] 0.70196</code></pre>
+<pre class="r"><code>pr_a</code></pre>
+<pre><code>## [1] 0.791</code></pre>
+<pre class="r"><code>k &lt;- (pr_a-pr_e)/(1-pr_e)
+k</code></pre>
+<pre><code>## [1] 0.2987518</code></pre>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2>评估未来的模型性能</h2>
+<div class="section level3">
+<h3>保持法</h3>
+<p>保持法也就是把数据集随机分为训练数据集合，验证数据集合和测试数据集。 保持法的一个问题就是每个划分的数据集包含不同类别的数量可能过大或过小，尤其是某些类别本来就很小。这时，我们可以采用分层随机抽样，分层随机抽样确保了划分后每个类别的比例与总体数据中的比例近似相等。</p>
+<p>caret包里面有createDataPartition()函数，就是用了分层抽样的方法。我们来验证一下。我们还是用adult这个数据集。</p>
+<pre class="r"><code>library(caret)
+in_train &lt;- createDataPartition(adult$income,p=0.75,list = FALSE)
+adult_train_partition &lt;- adult[in_train,]
+table(adult$income)</code></pre>
+<pre><code>## 
+## &lt;=50K  &gt;50K 
+## 24720  7841</code></pre>
+<pre class="r"><code>table(adult_train_partition$income)</code></pre>
+<pre><code>## 
+## &lt;=50K  &gt;50K 
+## 18540  5881</code></pre>
+<p>可以计算一下，两者的阳性和阴性比例都是0.317。</p>
+</div>
+<div class="section level3">
+<h3>重复保持法</h3>
+<p>它是一种保持法的特殊形式，它对多个随机保持样本的模型进行评估，然后用结果的均值来评价整个模型的性能。</p>
+</div>
+<div class="section level3">
+<h3>交叉验证</h3>
+<p>k折交叉验证是以重复保持法为基础。k折交叉验证将数据随机分成k个完全分隔开的部分，这些部分为折。一般我们分成10折。对于10折中的每一折，我们使用剩下的9折的数据进行建模，那一折用来评估。训练和评估模型重复10次。最后输出所有折的平均性能指标。</p>
+<p>也是在caret包中，可以用createFolds()函数来创建交叉验证的数据集，比如下面的例子。</p>
+<pre class="r"><code>library(caret)
+folds &lt;- createFolds(adult$income,k=10)
+str(folds)</code></pre>
+<pre><code>## List of 10
+##  $ Fold01: int [1:3256] 9 11 23 26 29 32 80 90 97 99 ...
+##  $ Fold02: int [1:3256] 2 22 28 37 44 69 84 98 113 128 ...
+##  $ Fold03: int [1:3256] 6 14 34 35 46 49 53 96 106 118 ...
+##  $ Fold04: int [1:3256] 3 7 13 18 27 65 78 91 100 111 ...
+##  $ Fold05: int [1:3257] 16 50 52 57 60 63 79 92 101 103 ...
+##  $ Fold06: int [1:3256] 8 33 58 62 64 73 77 87 102 104 ...
+##  $ Fold07: int [1:3256] 1 24 39 43 45 68 72 81 105 125 ...
+##  $ Fold08: int [1:3256] 4 5 10 17 31 36 38 47 51 54 ...
+##  $ Fold09: int [1:3256] 19 20 21 30 41 67 71 82 86 93 ...
+##  $ Fold10: int [1:3256] 12 15 25 40 42 48 59 70 74 85 ...</code></pre>
+<pre class="r"><code>adult01_train &lt;- adult[folds$Fold01,]
+adult01_test &lt;- adult[-folds$Fold01,]</code></pre>
+<p>下面用朴素贝叶斯这张的内容来演示一个完整的过程。为了计算Kappa值，我们在添加一个包irr。</p>
+<pre class="r"><code>library(irr)
+folds &lt;- createFolds(adult$income,k=10)
+cv_results &lt;- lapply(folds, function(x) {
+  adult_train &lt;- adult[x, ]
+  adult_test &lt;- adult[-x, ]
+  adult_model &lt;-  naiveBayes(income ~ ., data = adult_train)
+  adult_pred &lt;- predict(adult_model, adult_test)
+  adult_actual &lt;- adult_test$income
+  kappa &lt;- kappa2(data.frame(adult_actual, adult_pred))$value
+  return(kappa)
+})
+
+str(cv_results)</code></pre>
+<pre><code>## List of 10
+##  $ Fold01: num 0.289
+##  $ Fold02: num 0.297
+##  $ Fold03: num 0.292
+##  $ Fold04: num 0.295
+##  $ Fold05: num 0.283
+##  $ Fold06: num 0.295
+##  $ Fold07: num 0.299
+##  $ Fold08: num 0.282
+##  $ Fold09: num 0.296
+##  $ Fold10: num 0.298</code></pre>
+<pre class="r"><code>mean(unlist(cv_results))</code></pre>
+<pre><code>## [1] 0.2925423</code></pre>
+<p>kappa比起上面的0.2988小了点。</p>
+</div>
+<div id="bootstrap" class="section level3">
+<h3>自助法抽样(bootstrap)</h3>
+<p>与k折交叉验证不同，自助法通过有放回的抽样方式，所以每个样本有可能被多次选择。直观来说，它应该不及k折交叉，但是当数据集较小时，会很有用。此外，自助法抽样除了评价模型性能以外，还有很多其他用途。</p>
+</div>
+</div>
+<div class="section level2">
+<h2>小结</h2>
+<p>本章节介绍了几种统计量和评估未来模型性能的方法。另外值得注意的一点，一个好的模型不是只有这些统计量就够了，它可能还要有好的解释性，快速的计算速度等。</p>
+<p><a href="Preface.html">系列文章首页</a></p>
+</div>
+
+<p>Copyright &copy; 2016 Affluence Tan. All rights reserved.</p>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
