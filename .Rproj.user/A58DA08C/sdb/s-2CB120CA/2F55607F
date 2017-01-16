@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "name: \"my-website\"\noutput_dir: \".\"\nnavbar:\n  title: \"Affluence Tan\"\n  left:\n    - text: \"Home\"\n      icon: fa-home\n      href: index.html\n    - text: \"About\"\n      icon: fa-info\n      href: about.html\n    - text: \"More\"\n      icon: fa-gear\n      menu:\n        - text: \"Data Modeling\"\n          href: Preface.html\n        - text: \"Programming skill\"\n          href: Preface_programming.html \n        - text: \"Application of Data Science\"\n          href: Preface_application.html\n  right:\n    - text: \"github\"\n      icon: fa-github\n      href: https://github.com/TanMiningWithPyR \noutput:\n  html_document:\n    theme: cosmo\n    highlight: textmate\n    include:\n      after_body: footer.html\n      css: styles.css",
+    "created" : 1483694006724.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3198902268",
+    "id" : "2F55607F",
+    "lastKnownWriteTime" : 1484554372,
+    "last_content_update" : 1484554372119,
+    "path" : "D:/TanMiningWithPyR.github.io/_site.yml",
+    "project_path" : "_site.yml",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "yaml"
+}

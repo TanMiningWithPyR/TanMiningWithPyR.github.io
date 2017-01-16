@@ -203,6 +203,12 @@ $(document).ready(function () {
     <li>
       <a href="Preface.html">Data Modeling</a>
     </li>
+    <li>
+      <a href="Preface_programming.html">Programming skill</a>
+    </li>
+    <li>
+      <a href="Preface_application.html">Application of Data Science</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -385,16 +391,16 @@ table(adult$income)</code></pre>
 folds &lt;- createFolds(adult$income,k=10)
 str(folds)</code></pre>
 <pre><code>## List of 10
-##  $ Fold01: int [1:3256] 9 11 23 26 29 32 80 90 97 99 ...
-##  $ Fold02: int [1:3256] 2 22 28 37 44 69 84 98 113 128 ...
-##  $ Fold03: int [1:3256] 6 14 34 35 46 49 53 96 106 118 ...
-##  $ Fold04: int [1:3256] 3 7 13 18 27 65 78 91 100 111 ...
-##  $ Fold05: int [1:3257] 16 50 52 57 60 63 79 92 101 103 ...
-##  $ Fold06: int [1:3256] 8 33 58 62 64 73 77 87 102 104 ...
-##  $ Fold07: int [1:3256] 1 24 39 43 45 68 72 81 105 125 ...
-##  $ Fold08: int [1:3256] 4 5 10 17 31 36 38 47 51 54 ...
-##  $ Fold09: int [1:3256] 19 20 21 30 41 67 71 82 86 93 ...
-##  $ Fold10: int [1:3256] 12 15 25 40 42 48 59 70 74 85 ...</code></pre>
+##  $ Fold01: int [1:3256] 12 18 24 26 60 83 102 110 128 148 ...
+##  $ Fold02: int [1:3256] 8 13 14 29 33 42 45 97 101 103 ...
+##  $ Fold03: int [1:3256] 30 34 38 72 75 86 94 114 115 120 ...
+##  $ Fold04: int [1:3256] 1 6 36 37 41 51 55 56 63 66 ...
+##  $ Fold05: int [1:3256] 9 10 11 39 44 47 57 65 71 89 ...
+##  $ Fold06: int [1:3256] 16 53 59 80 81 90 99 104 112 127 ...
+##  $ Fold07: int [1:3256] 2 17 19 22 31 50 61 74 84 100 ...
+##  $ Fold08: int [1:3256] 15 23 43 67 79 87 111 117 123 157 ...
+##  $ Fold09: int [1:3256] 4 5 21 27 32 48 49 52 58 62 ...
+##  $ Fold10: int [1:3257] 3 7 20 25 28 35 40 46 54 68 ...</code></pre>
 <pre class="r"><code>adult01_train &lt;- adult[folds$Fold01,]
 adult01_test &lt;- adult[-folds$Fold01,]</code></pre>
 <p>下面用朴素贝叶斯这张的内容来演示一个完整的过程。为了计算Kappa值，我们在添加一个包irr。</p>
@@ -412,18 +418,18 @@ cv_results &lt;- lapply(folds, function(x) {
 
 str(cv_results)</code></pre>
 <pre><code>## List of 10
-##  $ Fold01: num 0.289
-##  $ Fold02: num 0.297
-##  $ Fold03: num 0.292
-##  $ Fold04: num 0.295
-##  $ Fold05: num 0.283
-##  $ Fold06: num 0.295
-##  $ Fold07: num 0.299
-##  $ Fold08: num 0.282
-##  $ Fold09: num 0.296
-##  $ Fold10: num 0.298</code></pre>
+##  $ Fold01: num 0.303
+##  $ Fold02: num 0.299
+##  $ Fold03: num 0.279
+##  $ Fold04: num 0.291
+##  $ Fold05: num 0.293
+##  $ Fold06: num 0.291
+##  $ Fold07: num 0.295
+##  $ Fold08: num 0.289
+##  $ Fold09: num 0.301
+##  $ Fold10: num 0.284</code></pre>
 <pre class="r"><code>mean(unlist(cv_results))</code></pre>
-<pre><code>## [1] 0.2925423</code></pre>
+<pre><code>## [1] 0.2924242</code></pre>
 <p>kappa比起上面的0.2988小了点。</p>
 </div>
 <div id="bootstrap" class="section level3">

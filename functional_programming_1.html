@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Affluence Tan" />
+
+<meta name="date" content="2017-01-12" />
+
+<title>R Functional programming</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Affluence Tan</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="about.html">
+    <span class="fa fa-info"></span>
+     
+    About
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-gear"></span>
+     
+    More
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Preface.html">Data Modeling</a>
+    </li>
+    <li>
+      <a href="Preface_programming.html">Programming skill</a>
+    </li>
+    <li>
+      <a href="Preface_application.html">Application of Data Science</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/TanMiningWithPyR">
+    <span class="fa fa-github"></span>
+     
+    github
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">R Functional programming</h1>
+<h4 class="author"><em>Affluence Tan</em></h4>
+<h4 class="date"><em>January 12, 2017</em></h4>
+
+</div>
+
+
+<div class="section level2">
+<h2>函数式编程</h2>
+<p>熟悉R语言编程的都知道一个规定，在R中，尽量不要用显式循环。而要实现这一点，那么R就应当是一种支持函数式编程的语言。那么什么是函数式编程呢？R语言的函数式编程又是怎么样的呢？本文的主要参考资料是<a href="http://adv-r.had.co.nz/">Advanced R by Hadley Wickham</a></p>
+<div class="section level3">
+<h3>什么是函数式编程</h3>
+<p>所有函数式编程的语言都会有函数是一等公民的说法，也就是说，该语言中别的对象能做的事情，函数都可以做。你可以将它赋值给一个变量，把它们组成一个list，把它作为参数传给别的函数，在函数里面创建定义函数，把它当函数返回值返回。</p>
+<p>使用函数式编程的动机与使用面向对象的动机差不多，都是为了让代码更加优雅，提高可重复性利用，实现模块化的编程。</p>
+</div>
+<div id="r" class="section level3">
+<h3>在R中实现函数式编程的几个例子</h3>
+<div class="section level4">
+<h4>函数作为参数</h4>
+<p>我们首先先创建一个数据集。</p>
+<pre class="r"><code># Generate a sample dataset
+set.seed(1014)
+df &lt;- data.frame(replicate(6, sample(c(1:10, -99), 6, rep = TRUE)))
+names(df) &lt;- letters[1:6]
+df</code></pre>
+<pre><code>##    a  b c   d   e f
+## 1  1  6 1   5 -99 1
+## 2 10  4 4 -99   9 3
+## 3  7  9 5   4   1 4
+## 4  2  9 3   8   6 8
+## 5  1 10 5   9   8 6
+## 6  6  2 1   3   8 5</code></pre>
+<p>现在想把-99的值改成NA，或许我们可以这样做。</p>
+<pre class="r"><code>df$a[df$a == -99] &lt;- NA
+df$b[df$b == -99] &lt;- NA
+df$c[df$c == -98] &lt;- NA
+df$d[df$d == -99] &lt;- NA
+df$e[df$e == -99] &lt;- NA
+df$f[df$g == -99] &lt;- NA</code></pre>
+<p>当然这个做法很蠢。其实我们可以写个函数。</p>
+<pre class="r"><code>fix_missing &lt;- function(x) {
+  x[x == -99] &lt;- NA
+  x
+}
+df$a &lt;- fix_missing(df$a)
+df$b &lt;- fix_missing(df$b)
+df$c &lt;- fix_missing(df$c)
+df$d &lt;- fix_missing(df$d)
+df$e &lt;- fix_missing(df$e)
+df$f &lt;- fix_missing(df$e)</code></pre>
+<p>上面的做法比起第一个好点，但是它和一般不带函数式编程的语言没什么区别，在C语言中，我们也会这么做。我们知道，在R中有个函数叫做lapply，最简单的，我们可以这么写</p>
+<pre class="r"><code>df[1:6] &lt;- lapply(df[1:6],fix_missing)</code></pre>
+<p>在这里，函数名作为参数传递给了lapply这个函数，并且返回了一个列表类型。</p>
+</div>
+<div class="section level4">
+<h4>函数作为返回值</h4>
+<p>除了-99之外，如果我们还想填充-999，-9999为NA的话，我们可能会创建三个函数。</p>
+<pre class="r"><code>fix_missing_99 &lt;- function(x) {
+  x[x == -99] &lt;- NA
+  x
+}
+fix_missing_999 &lt;- function(x) {
+  x[x == -999] &lt;- NA
+  x
+}
+fix_missing_9999 &lt;- function(x) {
+  x[x == -999] &lt;- NA
+  x
+}</code></pre>
+<p>把它改成符合函数式编程的特点</p>
+<pre class="r"><code>missing_fixer &lt;- function(na_value){
+  function(x){
+    x[x == na_value] &lt;- NA
+    x
+  }
+}
+#create two new functions based on missing_fixer
+fix_missing_99 &lt;- missing_fixer(-99)
+fix_missing_999 &lt;- missing_fixer(-999)
+
+fix_missing_99(c(-99,-999))</code></pre>
+<pre><code>## [1]   NA -999</code></pre>
+<pre class="r"><code>fix_missing_999(c(-99,-999))</code></pre>
+<pre><code>## [1] -99  NA</code></pre>
+</div>
+<div id="lists" class="section level4">
+<h4>将函数存储在lists中</h4>
+<p>如果你想求解一个数据框的多个统计量，最蠢的方法是这么做：</p>
+<pre class="r"><code>mean(df$a)</code></pre>
+<pre><code>## [1] 4.5</code></pre>
+<pre class="r"><code>median(df$a)</code></pre>
+<pre><code>## [1] 4</code></pre>
+<pre class="r"><code>sd(df$a)</code></pre>
+<pre><code>## [1] 3.72827</code></pre>
+<pre class="r"><code>mad(df$a)</code></pre>
+<pre><code>## [1] 4.4478</code></pre>
+<pre class="r"><code>IQR(df$a)</code></pre>
+<pre><code>## [1] 5.5</code></pre>
+<pre class="r"><code>mean(df$b)</code></pre>
+<pre><code>## [1] 6.666667</code></pre>
+<pre class="r"><code>median(df$b)</code></pre>
+<pre><code>## [1] 7.5</code></pre>
+<pre class="r"><code>sd(df$b)</code></pre>
+<pre><code>## [1] 3.204164</code></pre>
+<pre class="r"><code>mad(df$b)</code></pre>
+<pre><code>## [1] 2.9652</code></pre>
+<pre class="r"><code>IQR(df$b)</code></pre>
+<pre><code>## [1] 4.5</code></pre>
+<p>稍微明智点的方法是这么做：</p>
+<pre class="r"><code>summary_frame &lt;- function(x){
+  c(mean(x, na.rm = TRUE),
+    median(x, na.rm = TRUE),
+    sd(x, na.rm = TRUE),
+    mad(x, na.rm = TRUE),
+    IQR(x, na.rm = TRUE))
+}
+lapply(df,summary_frame)</code></pre>
+<pre><code>## $a
+## [1] 4.50000 4.00000 3.72827 4.44780 5.50000
+## 
+## $b
+## [1] 6.666667 7.500000 3.204164 2.965200 4.500000
+## 
+## $c
+## [1] 3.166667 3.500000 1.834848 2.223900 3.250000
+## 
+## $d
+## [1] 5.800000 5.000000 2.588436 2.965200 4.000000
+## 
+## $e
+## [1] 6.400000 8.000000 3.209361 1.482600 2.000000
+## 
+## $f
+## [1] 6.400000 8.000000 3.209361 1.482600 2.000000</code></pre>
+<p>即便如此，我们可以看到，每个统计函数里的参数x和na.rm重复了五次。如果我把利用函数式编程，可以把函数存储到一个列表里：</p>
+<pre class="r"><code>summary_frame &lt;- function(x){
+  funs &lt;- c(mean, median, sd, mad, IQR)
+  lapply(funs, function(f) f(x, na.rm = TRUE))
+}
+lapply(df,summary_frame)</code></pre>
+<pre><code>## $a
+## $a[[1]]
+## [1] 4.5
+## 
+## $a[[2]]
+## [1] 4
+## 
+## $a[[3]]
+## [1] 3.72827
+## 
+## $a[[4]]
+## [1] 4.4478
+## 
+## $a[[5]]
+## [1] 5.5
+## 
+## 
+## $b
+## $b[[1]]
+## [1] 6.666667
+## 
+## $b[[2]]
+## [1] 7.5
+## 
+## $b[[3]]
+## [1] 3.204164
+## 
+## $b[[4]]
+## [1] 2.9652
+## 
+## $b[[5]]
+## [1] 4.5
+## 
+## 
+## $c
+## $c[[1]]
+## [1] 3.166667
+## 
+## $c[[2]]
+## [1] 3.5
+## 
+## $c[[3]]
+## [1] 1.834848
+## 
+## $c[[4]]
+## [1] 2.2239
+## 
+## $c[[5]]
+## [1] 3.25
+## 
+## 
+## $d
+## $d[[1]]
+## [1] 5.8
+## 
+## $d[[2]]
+## [1] 5
+## 
+## $d[[3]]
+## [1] 2.588436
+## 
+## $d[[4]]
+## [1] 2.9652
+## 
+## $d[[5]]
+## [1] 4
+## 
+## 
+## $e
+## $e[[1]]
+## [1] 6.4
+## 
+## $e[[2]]
+## [1] 8
+## 
+## $e[[3]]
+## [1] 3.209361
+## 
+## $e[[4]]
+## [1] 1.4826
+## 
+## $e[[5]]
+## [1] 2
+## 
+## 
+## $f
+## $f[[1]]
+## [1] 6.4
+## 
+## $f[[2]]
+## [1] 8
+## 
+## $f[[3]]
+## [1] 3.209361
+## 
+## $f[[4]]
+## [1] 1.4826
+## 
+## $f[[5]]
+## [1] 2</code></pre>
+<p>注意，这里还用到了把函数作为参数传递。</p>
+</div>
+</div>
+<div class="section level3">
+<h3>匿名函数</h3>
+<p>在R中，我们用形如 a &lt;- function(x) 的语法来定义函数。如果你和别的编程语言进行对比，仔细一想可以发现，其实R语言并没有特殊的语法指定函数名（比如python中有def function_name）。你可以把 a &lt;- function(x) 看做是一个常规的赋值的操作。所以说，R在创建函数的时候，天然的就是匿名函数（不像python还要指定一个lambda）</p>
+<p>在R中，一个匿名函数有三个要素： 形式参数formals()，函数体body()，和环境environment()。</p>
+<pre class="r"><code>formals(function(x = 4) g(x) + h(x))</code></pre>
+<pre><code>## $x
+## [1] 4</code></pre>
+<pre class="r"><code>body(function(x = 4) g(x) + h(x))</code></pre>
+<pre><code>## g(x) + h(x)</code></pre>
+<pre class="r"><code>environment(function(x = 4) g(x) + h(x))</code></pre>
+<pre><code>## &lt;environment: R_GlobalEnv&gt;</code></pre>
+<p>匿名函数最常见的用途是闭包中。</p>
+</div>
+<div class="section level3">
+<h3>闭包</h3>
+<p>闭包是由函数编写的函数。之所以叫做闭包是因为他们封装了父函数的环境并且可以访问它的变量。</p>
+<pre class="r"><code>power &lt;- function(exponent){
+  function(x){
+    x ^ exponent
+  }
+}
+
+square &lt;- power(2)
+square(2)</code></pre>
+<pre><code>## [1] 4</code></pre>
+<pre class="r"><code>cube &lt;- power(3)
+cube(2)</code></pre>
+<pre><code>## [1] 8</code></pre>
+<pre class="r"><code># 当你打印闭包，除了环境，你看不到什么不同
+square</code></pre>
+<pre><code>## function(x){
+##     x ^ exponent
+##   }
+## &lt;environment: 0x000000000cd95918&gt;</code></pre>
+<pre class="r"><code>cube</code></pre>
+<pre><code>## function(x){
+##     x ^ exponent
+##   }
+## &lt;environment: 0x000000000ce76850&gt;</code></pre>
+<pre class="r"><code>as.list(environment(square))</code></pre>
+<pre><code>## $exponent
+## [1] 2</code></pre>
+<pre class="r"><code>as.list(environment(cube))</code></pre>
+<pre><code>## $exponent
+## [1] 3</code></pre>
+<div class="section level4">
+<h4>可变状态</h4>
+<p>符号“&lt;&lt;-”可以改变上一层的状态。</p>
+<pre class="r"><code>new_counter &lt;- function(){
+  i &lt;- 0
+  function(){
+    i &lt;&lt;- i + 1
+    i
+  }
+}
+
+counter_one &lt;- new_counter()
+counter_two &lt;- new_counter()
+
+counter_one()</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>counter_one()</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>counter_two()</code></pre>
+<pre><code>## [1] 1</code></pre>
+<p>可以看到，函数的执行环境是临时的，但是闭包可以一直访问它创建的环境。</p>
+<p>如果将i改成全局变量并且不用闭包：</p>
+<pre class="r"><code>i &lt;- 0
+new_counter2 &lt;- function(){
+  i &lt;&lt;- i + 1
+  i 
+}
+
+counter2_one &lt;- new_counter2()
+counter2_two &lt;- new_counter2()
+
+counter2_one</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>counter2_two</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>i</code></pre>
+<pre><code>## [1] 2</code></pre>
+<p>如果“&lt;&lt;-”改成“&lt;-” :</p>
+<pre class="r"><code>new_counter3 &lt;- function() {
+  i &lt;- 0
+  function() {
+    i &lt;- i + 1
+    i
+  }
+}
+
+counter3_one &lt;- new_counter3()
+counter3_two &lt;- new_counter3()
+
+counter3_one()</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>counter3_one()</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>counter3_two()</code></pre>
+<pre><code>## [1] 1</code></pre>
+</div>
+</div>
+<div class="section level3">
+<h3>函数列表</h3>
+<p>我们可以把函数放在列表里面，想这样：</p>
+<pre class="r"><code>compute_mean &lt;- list(
+  base = function(x) mean(x),
+  sum = function(x) sum(x) / length(x),
+  manual = function(x) {
+    total &lt;- 0
+    n &lt;- length(x)
+    for (i in seq_along(x)) {
+      total &lt;- total + x[i] / n
+    }
+    total
+  }
+)
+
+x &lt;- runif(1e5)
+system.time(compute_mean$base(x))</code></pre>
+<pre><code>##    user  system elapsed 
+##       0       0       0</code></pre>
+<pre class="r"><code>system.time(compute_mean[[2]](x))</code></pre>
+<pre><code>##    user  system elapsed 
+##       0       0       0</code></pre>
+<pre class="r"><code>system.time(compute_mean[[&quot;manual&quot;]](x))</code></pre>
+<pre><code>##    user  system elapsed 
+##    0.08    0.00    0.08</code></pre>
+<pre class="r"><code>call_fun &lt;- function(f, ...) f(...)
+lapply(compute_mean, call_fun, x)</code></pre>
+<pre><code>## $base
+## [1] 0.4994771
+## 
+## $sum
+## [1] 0.4994771
+## 
+## $manual
+## [1] 0.4994771</code></pre>
+<p><a href="Preface_programming.html">返回该系列文章目录页</a></p>
+</div>
+</div>
+
+<p>Copyright &copy; 2016 Affluence Tan. All rights reserved.</p>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

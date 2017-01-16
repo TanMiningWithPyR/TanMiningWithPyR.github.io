@@ -1,0 +1,254 @@
+---
+title: "R Functional programming"
+author: "Affluence Tan"
+date: "January 12, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 函数式编程
+
+熟悉R语言编程的都知道一个规定，在R中，尽量不要用显式循环。而要实现这一点，那么R就应当是一种支持函数式编程的语言。那么什么是函数式编程呢？R语言的函数式编程又是怎么样的呢？本文的主要参考资料是[Advanced R by Hadley Wickham](http://adv-r.had.co.nz/)
+
+### 什么是函数式编程
+
+所有函数式编程的语言都会有函数是一等公民的说法，也就是说，该语言中别的对象能做的事情，函数都可以做。你可以将它赋值给一个变量，把它们组成一个list，把它作为参数传给别的函数，在函数里面创建定义函数，把它当函数返回值返回。
+
+使用函数式编程的动机与使用面向对象的动机差不多，都是为了让代码更加优雅，提高可重复性利用，实现模块化的编程。
+
+### 在R中实现函数式编程的几个例子
+
+#### 函数作为参数
+
+我们首先先创建一个数据集。
+```{r generate dataset}
+# Generate a sample dataset
+set.seed(1014)
+df <- data.frame(replicate(6, sample(c(1:10, -99), 6, rep = TRUE)))
+names(df) <- letters[1:6]
+df
+```
+现在想把-99的值改成NA，或许我们可以这样做。
+```{r most stupid method}
+df$a[df$a == -99] <- NA
+df$b[df$b == -99] <- NA
+df$c[df$c == -98] <- NA
+df$d[df$d == -99] <- NA
+df$e[df$e == -99] <- NA
+df$f[df$g == -99] <- NA
+```
+当然这个做法很蠢。其实我们可以写个函数。
+```{r little stupid method}
+fix_missing <- function(x) {
+  x[x == -99] <- NA
+  x
+}
+df$a <- fix_missing(df$a)
+df$b <- fix_missing(df$b)
+df$c <- fix_missing(df$c)
+df$d <- fix_missing(df$d)
+df$e <- fix_missing(df$e)
+df$f <- fix_missing(df$e)
+```
+上面的做法比起第一个好点，但是它和一般不带函数式编程的语言没什么区别，在C语言中，我们也会这么做。我们知道，在R中有个函数叫做lapply，最简单的，我们可以这么写
+```{r clever method}
+df[1:6] <- lapply(df[1:6],fix_missing)
+```
+在这里，函数名作为参数传递给了lapply这个函数，并且返回了一个列表类型。
+
+#### 函数作为返回值
+
+除了-99之外，如果我们还想填充-999，-9999为NA的话，我们可能会创建三个函数。
+```{r -99-999-9999}
+fix_missing_99 <- function(x) {
+  x[x == -99] <- NA
+  x
+}
+fix_missing_999 <- function(x) {
+  x[x == -999] <- NA
+  x
+}
+fix_missing_9999 <- function(x) {
+  x[x == -999] <- NA
+  x
+}
+```
+把它改成符合函数式编程的特点
+```{r miss_function}
+missing_fixer <- function(na_value){
+  function(x){
+    x[x == na_value] <- NA
+    x
+  }
+}
+#create two new functions based on missing_fixer
+fix_missing_99 <- missing_fixer(-99)
+fix_missing_999 <- missing_fixer(-999)
+
+fix_missing_99(c(-99,-999))
+fix_missing_999(c(-99,-999))
+```
+
+#### 将函数存储在lists中
+
+如果你想求解一个数据框的多个统计量，最蠢的方法是这么做：
+```{r function in lists_1}
+mean(df$a)
+median(df$a)
+sd(df$a)
+mad(df$a)
+IQR(df$a)
+
+mean(df$b)
+median(df$b)
+sd(df$b)
+mad(df$b)
+IQR(df$b)
+```
+稍微明智点的方法是这么做：
+```{r function in lists_2}
+summary_frame <- function(x){
+  c(mean(x, na.rm = TRUE),
+    median(x, na.rm = TRUE),
+    sd(x, na.rm = TRUE),
+    mad(x, na.rm = TRUE),
+    IQR(x, na.rm = TRUE))
+}
+lapply(df,summary_frame)
+```
+即便如此，我们可以看到，每个统计函数里的参数x和na.rm重复了五次。如果我把利用函数式编程，可以把函数存储到一个列表里：
+```{r function in lists_3}
+summary_frame <- function(x){
+  funs <- c(mean, median, sd, mad, IQR)
+  lapply(funs, function(f) f(x, na.rm = TRUE))
+}
+lapply(df,summary_frame)
+```
+注意，这里还用到了把函数作为参数传递。
+
+### 匿名函数
+
+在R中，我们用形如 a <- function(x) 的语法来定义函数。如果你和别的编程语言进行对比，仔细一想可以发现，其实R语言并没有特殊的语法指定函数名（比如python中有def function_name）。你可以把 a <- function(x) 看做是一个常规的赋值的操作。所以说，R在创建函数的时候，天然的就是匿名函数（不像python还要指定一个lambda）
+
+在R中，一个匿名函数有三个要素： 形式参数formals()，函数体body()，和环境environment()。
+
+```{r function three elements}
+formals(function(x = 4) g(x) + h(x))
+body(function(x = 4) g(x) + h(x))
+environment(function(x = 4) g(x) + h(x))
+```
+
+匿名函数最常见的用途是闭包中。
+
+### 闭包
+
+闭包是由函数编写的函数。之所以叫做闭包是因为他们封装了父函数的环境并且可以访问它的变量。
+```{r power function}
+power <- function(exponent){
+  function(x){
+    x ^ exponent
+  }
+}
+
+square <- power(2)
+square(2)
+
+cube <- power(3)
+cube(2)
+
+# 当你打印闭包，除了环境，你看不到什么不同
+square
+cube
+
+as.list(environment(square))
+as.list(environment(cube))
+```
+
+#### 可变状态
+
+符号“<<-”可以改变上一层的状态。
+```{r counter function}
+new_counter <- function(){
+  i <- 0
+  function(){
+    i <<- i + 1
+    i
+  }
+}
+
+counter_one <- new_counter()
+counter_two <- new_counter()
+
+counter_one()
+counter_one()
+counter_two()
+```
+
+可以看到，函数的执行环境是临时的，但是闭包可以一直访问它创建的环境。
+
+如果将i改成全局变量并且不用闭包：
+
+```{r counter no enclose}
+i <- 0
+new_counter2 <- function(){
+  i <<- i + 1
+  i 
+}
+
+counter2_one <- new_counter2()
+counter2_two <- new_counter2()
+
+counter2_one
+counter2_two
+i
+```
+
+如果“<<-”改成“<-” :
+
+```{r counter no <<-}
+new_counter3 <- function() {
+  i <- 0
+  function() {
+    i <- i + 1
+    i
+  }
+}
+
+counter3_one <- new_counter3()
+counter3_two <- new_counter3()
+
+counter3_one()
+counter3_one()
+counter3_two()
+```
+
+### 函数列表
+
+我们可以把函数放在列表里面，想这样：
+```{r function list}
+compute_mean <- list(
+  base = function(x) mean(x),
+  sum = function(x) sum(x) / length(x),
+  manual = function(x) {
+    total <- 0
+    n <- length(x)
+    for (i in seq_along(x)) {
+      total <- total + x[i] / n
+    }
+    total
+  }
+)
+
+x <- runif(1e5)
+system.time(compute_mean$base(x))
+system.time(compute_mean[[2]](x))
+system.time(compute_mean[["manual"]](x))
+
+call_fun <- function(f, ...) f(...)
+lapply(compute_mean, call_fun, x)
+```
+
+[返回该系列文章目录页](Preface_programming.html)

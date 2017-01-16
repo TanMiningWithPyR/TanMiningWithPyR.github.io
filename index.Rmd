@@ -14,3 +14,6 @@ title: "这里是谭夫有的个人博客"
 
 [数据模型学习系列](Preface.html)
 
+[编程技巧系列](Preface_programming.html)
+
+[数据科学应用系列](Preface_application.html)

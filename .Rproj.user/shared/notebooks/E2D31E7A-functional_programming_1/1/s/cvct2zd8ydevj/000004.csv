@@ -1,0 +1,5 @@
+"0","# Generate a sample dataset"
+"0","set.seed(1014)"
+"0","df <- data.frame(replicate(6, sample(c(1:10, -99), 6, rep = TRUE)))"
+"0","names(df) <- letters[1:6]"
+"0","df"
