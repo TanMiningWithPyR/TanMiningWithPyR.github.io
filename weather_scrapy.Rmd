@@ -1,0 +1,139 @@
+---
+title: "从网页获取历史天气"
+author: "Affluence Tan"
+date: "February 4, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 引言和动机
+
+在分析天池比赛数据集的时候，需要一些天气数据，所以只能到网上去爬。经过搜索，发现一个叫[天气后报](http://www.tianqihoubao.com)的网站，数据大而全，可以一用。尽管这是一个很简单的爬取过程（甚至称不上爬取），但还是有一些心得，可为后用。
+
+## 平台环境和使用的软件包
+
+我还是用R语言，过程中一个比较重要的领悟就是一定要用Linux平台或Mac平台进行，因为会涉及到中文编码的问题，并且这个问题如果用Windows在XML包中无法解决。
+```{r message=FALSE,warning=FALSE}
+library(stringr)
+library(XML)
+library(readr)
+library(plyr)
+library(dplyr)
+library(tidyr)
+```
+其中XML包是用来解析网页用的，别的都是一些数据处理的包。
+
+## 分析网站的结构
+
+这个网站结构简单，以上海2011年1月的天气数据为例，如下 http://www.tianqihoubao.com/lishi/shanghai/month/201101.html 。
+基本上就是www.tianqihoubao.com/lishi/ + 城市/month/ + 月份.html。
+
+所以生成一个向量，包含所有需要查询的城市和要查询的月份。
+
+```{r}
+# create a table , listing all citys and their English name
+pinyin_city <- read_csv("pinyin_weather.csv")
+head(pinyin_city)
+
+# the common part of URLs
+root_url <- "http://www.tianqihoubao.com/lishi"
+
+# the English names of city
+city <- pinyin_city$en_name2
+
+# create the vector of dates
+month_str <- c(str_c("0",1:9,sep = ""),"10","11","12")
+month <- c(str_c("2015",month_str,".html",sep = ""),str_c("2016",month_str,".html",sep = ""))
+
+# the function is for creating a vector of 24 months Url of one city
+paste_city_month <- function(city){
+  str_c(str_c(c(root_url,city,"month/"),collapse = "/"),month,sep = "")
+}
+
+# apply the function to all citys
+city_permonth_url_list <- lapply(city,paste_city_month)
+names(city_permonth_url_list) <- city
+head(city_permonth_url_list,n = 3)
+```
+可以看到，最后生成了一个列表，包含了所有要爬取的网页。这里有个奇怪的地方，为什么要pinyin_city的数据集里有两个英文的城市名。因为天气后报这个网站有几个城市的英文名称有点怪异。导致爬取失败。由于是一次性的爬虫，我就没有利用异常处理，其实，在后面的程序中，如果使用了异常处理会更好。
+
+## 解析网页Parse
+
+我们利用XML包来解析网页。这个R包其实是调用了Libxml2，这是个C语言的XML库。在R包XML中，先用Libxml2解析网页为C的DOM树，再把它翻译成R语言的数据结构，变成R可以识别R的DOM树。
+```{r}
+weather_function <- function(city_permonth_url){
+  # Parse webpage,  with encoding gb2312
+  city_yearmonth <- htmlParse(city_permonth_url,encoding = "gb2312")
+  city_yearmonth_table <- readHTMLTable(city_yearmonth)[[1]] # 提取</table>中的内容
+  return(city_yearmonth_table)
+}
+```
+创建一个函数，对于每个URL，读取其中的一个表格。
+
+下面将函数应用到每一个URL上面，保存为csv文本。
+```{r, eval=FALSE}
+weather_df_list=list()
+for (i in names(city_permonth_url_list)){
+  weather_df_list[[i]] <- lapply(city_permonth_url_list[[i]],weather_function)
+  city_weather <- bind_rows(weather_df_list[[i]])
+  file_name = str_c(i,".csv")
+  print(file_name)  # to show parsing process
+  write_csv(city_weather,file_name)
+}
+```
+这里每一个城市的天气会保存成一个文件，并且放在当前的工作目录下面。
+
+接下来清洗一下表格，把它改成有用的形式，有这么几步：
+
+* 把所有城市合成一张大表
+* 去掉换行符
+* 字符型转成数值型和日期型
+* 在大表中添上城市
+
+```{r, eval=FALSE}
+#  change work dir  
+setwd("C:/Users/tanf/Desktop/tianchi/weather_city")
+
+# bind all citys' table
+city <- dir()
+names(city) <- city
+read_citytable <- function(city_name){
+  weather_table <- read_csv(city_name)
+  weather_table[["city"]] <- city_name
+  return(weather_table)
+}
+
+city_weather_collection <- lapply(city,read_citytable)
+city_weather <- bind_rows(city_weather_collection)
+names(city_weather) <- c("date","status","temp","wind_direction_force","city_file_name")
+# convert string to number
+a <- city_weather %>% separate(col = status,into = c("first_status","second_status"),sep = "/") %>%
+    separate(col = temp,into = c("highest_temp","lowest_temp"),sep = "/") %>%
+    separate(col = wind_direction_force,into = c("first_wind","second_wind"),sep = "/") %>%
+    separate(col = first_wind,into = c("first_wind_direction","first_wind_force"),sep = " ") %>%
+    separate(col = second_wind,into = c("second_wind_direction","second_wind_force"),sep = " ")
+a$date <- as.Date(a$date,"%Y年%m月%d日")
+a$highest_temp <- as.integer(str_trim(str_replace(a$highest_temp,"℃\r\n","")))
+a$lowest_temp <- as.integer(str_trim(str_replace(a$lowest_temp,"℃","")))
+a$first_status <- str_trim(str_replace(a$first_status,"\r\n",""))
+a$first_wind_force <- str_trim(str_replace(a$first_wind_force,"\r\n",""))
+a$first_wind_direction <- str_trim(str_replace(a$first_wind_direction,"\r\r\n",""))
+a <- a %>% separate(col = city_file_name,into = c("city","csv"),sep=".csv") %>% select(-contains("csv"))
+a$average_temp <- (a$highest_temp + a$lowest_temp)/2   
+a <- left_join(x = a,y = pinyin_weather,by=c("city" = "en_name2"))
+a <- a[,c(-13,-10)]
+names(a)[11] <- "city_cn"
+
+# output file named as "city_weather_tanf.csv"" 
+setwd("C:/Users/tanf/Desktop/tianchi/dataset")
+write_csv(a,"city_weathter_tanf.csv")
+```
+
+## 小结
+
+这只是一个很简单的网页数据采集，有很多的内容都没有涉及，比如利用XPATH语言查询（这个是网络数据采集的重头戏），还有利用Rcurl包和HTTP协议动态模拟浏览器登陆网站获取网页等技术。
+
+[返回该系列文章目录页](Preface_application.html)

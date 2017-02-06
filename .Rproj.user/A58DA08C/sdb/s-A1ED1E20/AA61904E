@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"这里是谭夫有的个人博客\"\n---\n个人照片  |     电子邮箱\n----------|------------------------\n![](tanf.jpg) |  fuyou_tan@sina.cn\n\n\n##自我描述：\n\n一个略懂IT的统计学人。\n\n## 技术文章：\n\n[数据模型学习系列](Preface.html)\n\n[编程技巧系列](Preface_programming.html)\n\n[数据科学应用系列](Preface_application.html)\n",
+    "created" : 1484558371735.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "584349618",
+    "id" : "AA61904E",
+    "lastKnownWriteTime" : 1484557451,
+    "last_content_update" : 1484557451,
+    "path" : "D:/TanMiningWithPyR.github.io/index.Rmd",
+    "project_path" : "index.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
